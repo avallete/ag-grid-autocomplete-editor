@@ -10,6 +10,7 @@
   },
   "scripts": {
     "test": "exit 0",
+    "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail --allow-js"
   },
   "author": "Andrew Valleteau",
