@@ -1,0 +1,70 @@
+{
+  "name": "ag-grid-autocomplete-editor",
+  "version": "1.0.0",
+  "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
+  "deprecated": false,
+  "main": "ag-grid-autocomplete-editor.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avallete/ag-grid-autocomplete-editor.git"
+  },
+  "scripts": {
+    "test": "exit 0",
+    "build": "webpack --config config/webpack.prod.js --progress --profile --bail --allow-js"
+  },
+  "author": "Andrew Valleteau",
+  "license": "MIT",
+  "keywords": [
+    "autocomplete",
+    "autocompleter",
+    "lightweight",
+    "javascript",
+    "auto-complete",
+    "vanilla",
+    "vanilla-js",
+    "input",
+    "ui",
+    "complete",
+    "ajax",
+    "form",
+    "component",
+    "collapse",
+    "dropdown",
+    "suggester",
+    "fast",
+    "tiny",
+    "small",
+    "typescript",
+    "widget",
+    "grouping",
+    "group",
+    "groups",
+    "categories",
+    "category",
+    "ag-grid",
+    "ag-grid-autocomplete",
+    "ag-grid-autocomplete-editor",
+    "select"
+  ],
+  "dependencies": {
+    "ag-grid-community": "^20.1.0",
+    "autocompleter": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^11.11.3",
+    "autoprefixer": "^9.5.0",
+    "css-loader": "^2.1.1",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-scss": "^2.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.3.3333",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
+  },
+  "types": "./ag-grid-autocomplete-editor.d.ts"
+}

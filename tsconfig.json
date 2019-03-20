@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": true,
+    "module": "es6",
+    "target": "es5",
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "newLine": "CRLF",
+    "noImplicitThis": true,
+    "strict": true,
+    "declaration": true,
+    "sourceMap": true,
+    "experimentalDecorators": true
+  },
+  "files": [
+    "ag-grid-autocomplete-editor.ts"
+  ]
+}
