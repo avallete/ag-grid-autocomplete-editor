@@ -4,6 +4,8 @@ Quick implementation of autocompletion into [ag-Grid](https://github.com/ag-grid
 ## Description
 The goal of this package is to provide an easy way to have autocompleted cellEditor into ag-Grid.
 
+## [Demo](https://stackblitz.com/edit/ag-grid-autocomplete-editor)
+![aAwS0747n5](https://user-images.githubusercontent.com/8771783/54754946-0bdae680-4be5-11e9-9a49-b2b56d0d762c.gif)
 
 ## Usage
 This package provide a new cellEditor named: `AutocompleteSelectCellEditor`.
@@ -24,9 +26,9 @@ You can configure and customize the cell and behavior with the following `cellEd
     - `customize`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
  - ... all the classical arguments taken by a ag-Grid `cellEditor`.
  
- ## Example
+## Example
  
- ### Simple autocompletion from datasource
+### Simple autocompletion from datasource
  ```js
 import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
 import 'ag-grid-autocomplete-editor/main.css';
@@ -53,7 +55,7 @@ import 'ag-grid-autocomplete-editor/main.css';
 }
 ```
 
- ### Autocompletion with Ajax request
+### Autocompletion with Ajax request
  ```js
 import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
 import 'ag-grid-autocomplete-editor/main.css';
