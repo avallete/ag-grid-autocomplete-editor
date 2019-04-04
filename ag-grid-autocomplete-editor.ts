@@ -1,5 +1,5 @@
 import {AutocompleteItem} from "autocompleter";
-import {Constants, GridOptionsWrapper, Autowired, IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent} from "ag-grid-community";
+import {Constants, GridOptionsWrapper, Autowired, IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent, SuppressKeyboardEventParams} from "ag-grid-community";
 
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
@@ -39,7 +39,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>,
-    data?: DataFormat[],
+    data: DataFormat[],
     placeholder?: string
 }
 
@@ -57,6 +57,11 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         if (this.currentItem) {
             this.eInput.value = this.currentItem.label || this.currentItem.value as string;
         }
+    }
+    private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
+        let keyCode = params.event.keyCode;
+        let gridShouldDoNothing = params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER);
+        return gridShouldDoNothing;
     }
 
     private static getStartValue(params: IAutocompleteSelectCellEditorParams) {
@@ -163,13 +168,9 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         if (this.gridOptionsWrapper && !this.gridOptionsWrapper.isFullRowEdit()) {
             this.addDestroyableEventListener(this.eInput, 'change', () => params.stopEditing());
         }
-        this.addDestroyableEventListener(this.eInput, 'keydown', (event: KeyboardEvent) => {
-            const code = event.keyCode || event.code;
-            const isNavigationKey = code === Constants.KEY_UP || code === Constants.KEY_DOWN;
-            if (isNavigationKey) {
-                event.stopPropagation();
-            }
-        });
+        if (!params.colDef.suppressKeyboardEvent) {
+            params.colDef.suppressKeyboardEvent = AutocompleteSelectCellEditor.suppressKeyboardEvent;
+        }
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {

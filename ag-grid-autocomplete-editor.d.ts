@@ -20,7 +20,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 }
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>;
-    data?: DataFormat[];
+    data: DataFormat[];
     placeholder?: string;
 }
 export declare class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
@@ -30,6 +30,7 @@ export declare class AutocompleteSelectCellEditor extends PopupComponent impleme
     private autocompleter?;
     private gridOptionsWrapper?;
     constructor();
+    private static suppressKeyboardEvent;
     private static getStartValue;
     init(params: IAutocompleteSelectCellEditorParams): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
