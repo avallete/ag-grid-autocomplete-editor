@@ -101,6 +101,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             emptyMsg: "None",
             onSelect: function (cellEditor, item: AutocompleteClient) {
                 cellEditor.currentItem = item;
+                cellEditor.focusOut();
             },
             fetch: function (cellEditor, text, callback) {
                 let items = params.data || [];
