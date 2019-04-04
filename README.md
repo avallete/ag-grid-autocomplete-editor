@@ -1,6 +1,11 @@
 # ag-grid-autocomplete-editor
 Quick implementation of autocompletion into [ag-Grid](https://github.com/ag-grid/ag-grid) cell using [autocompleter](https://github.com/kraaden/autocomplete) package.
 
+## Install
+```bash
+npm install --save ag-grid-autocomplete-editor
+```
+
 ## Description
 The goal of this package is to provide an easy way to have autocompleted cellEditor into ag-Grid.
 
