@@ -40,13 +40,11 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>,
     data: DataFormat[],
-    placeholder?: string,
-    loadOnAttach?: boolean;
+    placeholder?: string
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached: boolean = false;
-    private loadOnAttach: boolean = false;
     private readonly eInput: HTMLInputElement;
     public currentItem?: DataFormat;
     private autocompleter?: any;
@@ -119,7 +117,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                     container.style.bottom = (window.innerHeight - inputRect.bottom + input.offsetHeight) + "px";
                     container.style.maxHeight = "140px";
                 }
-            },
+            }
         };
         this.focusAfterAttached = params.cellStartedEdit;
 
@@ -174,9 +172,6 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         if (!params.colDef.suppressKeyboardEvent) {
             params.colDef.suppressKeyboardEvent = AutocompleteSelectCellEditor.suppressKeyboardEvent;
         }
-        if (params.loadOnAttach) {
-            this.loadOnAttach = true;
-        }
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {
@@ -186,10 +181,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
 
     focusIn(): void {
-        this.eInput.focus();
-        if (this.loadOnAttach) {
-            this.autocompleter.update();
-        }
+        this.eInput.focus()
     }
 
     focusOut(): void {
