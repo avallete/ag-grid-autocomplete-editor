@@ -22,9 +22,11 @@ export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>;
     data: DataFormat[];
     placeholder?: string;
+    loadOnAttach?: boolean;
 }
 export declare class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached;
+    private loadOnAttach;
     private readonly eInput;
     currentItem?: DataFormat;
     private autocompleter?;
