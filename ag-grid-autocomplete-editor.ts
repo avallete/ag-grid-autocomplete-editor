@@ -39,7 +39,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>,
-    data: DataFormat[],
+    selectData: DataFormat[],
     placeholder?: string
 }
 
@@ -104,7 +104,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 cellEditor.focusOut();
             },
             fetch: (cellEditor, text, callback) => {
-                let items = params.data || [];
+                let items = params.selectData || [];
                 let match = text.toLowerCase() || cellEditor.eInput.value.toLowerCase();
                 callback(items.filter(function (n) {
                     return n.label.toLowerCase().indexOf(match) !== -1;

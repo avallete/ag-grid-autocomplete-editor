@@ -16,7 +16,7 @@ The goal of this package is to provide an easy way to have autocompleted cellEdi
 This package provide a new cellEditor named: `AutocompleteSelectCellEditor`.
 You can configure and customize the cell and behavior with the following `cellEditorParams`:
 
-- `data`: is a list of data matching the type `{value: string, label: string, group?: string}`, if no other parameters provided
+- `selectData`: is a list of data matching the type `{value: string, label: string, group?: string}`, if no other parameters provided
    the autcompletion will use this data with a simple `.filter`. Basically, if you already have local data, you probably don't need anything else.
 - `placeholder`: the placeholder is a `string` who will be put onto the input field.
 - `autocomplete`: please see [autocompleter](https://github.com/kraaden/autocomplete) for more details about the following parameters
@@ -43,7 +43,7 @@ import 'ag-grid-autocomplete-editor/main.css';
     field: "data",
     cellEditor: AutocompleteSelectCellEditor,
     cellEditorParams: {
-        data: [
+        selectData: [
             { label: 'Canada', value: 'CA', group: 'North America' },
             { label: 'United States', value: 'US', group: 'North America' },
             { label: 'Uzbekistan', value: 'UZ', group: 'Asia' },
