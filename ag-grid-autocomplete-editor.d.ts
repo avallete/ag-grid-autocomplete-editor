@@ -26,7 +26,7 @@ export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
 export declare class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached;
     private readonly eInput;
-    private currentItem?;
+    currentItem?: DataFormat;
     private autocompleter?;
     private gridOptionsWrapper?;
     constructor();
