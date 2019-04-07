@@ -103,7 +103,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 cellEditor.currentItem = item;
                 cellEditor.focusOut();
             },
-            fetch: function (cellEditor, text, callback) {
+            fetch: (cellEditor, text, callback) => {
                 let items = params.data || [];
                 let match = text.toLowerCase() || cellEditor.eInput.value.toLowerCase();
                 callback(items.filter(function (n) {
