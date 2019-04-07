@@ -46,7 +46,7 @@ export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached: boolean = false;
     private readonly eInput: HTMLInputElement;
-    private currentItem?: DataFormat;
+    public currentItem?: DataFormat;
     private autocompleter?: any;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper?: GridOptionsWrapper;
@@ -80,7 +80,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 let itemElement = document.createElement("div");
                 let regex = new RegExp(value, 'gi');
                 let fieldItem = document.createElement('span');
-                fieldItem.innerHTML = item.label.replace(regex, function (match) {
+                fieldItem.innerHTML = item.label.replace(regex, function (match: string) {
                     return "<strong>" + match + "</strong>"
                 });
                 itemElement.append(fieldItem);
