@@ -16,6 +16,9 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     className?: string;
     minLength?: number;
     emptyMsg?: string;
+    strict: boolean;
+    autoselectfirst: boolean;
+    onFreeTextSelect?: (item: T, input: HTMLInputElement) => void;
     onSelect: (item: T, input: HTMLInputElement) => void;
     fetch: (text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;
@@ -58,10 +61,13 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
     const userAgent = navigator.userAgent;
     const mobileFirefox = userAgent.indexOf("Firefox") !== -1 && userAgent.indexOf("Mobile") !== -1;
     const debounceWaitMs = settings.debounceWaitMs || 0;
-    
+    const strict = settings.strict;
+    const autoselectfirst = settings.autoselectfirst;
+    const onFreeTextSelect = settings.onFreeTextSelect;
+
     // 'keyup' event will not be fired on Mobile Firefox, so we have to use 'input' event instead
     const keyUpEventName = mobileFirefox ? "input" : "keyup";
-    
+
     let items: T[] = [];
     let inputValue = "";
     const minLen = settings.minLength || 2;
@@ -160,7 +166,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
      */
 
     function update(): void {
-        
+
         // delete all children from autocomplete DOM container
         while (container.firstChild) {
             container.removeChild(container.firstChild);
@@ -213,7 +219,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             }
         });
         container.appendChild(fragment);
-        if (items.length < 1) {
+        if (items.length < 1 && strict) {
             if (settings.emptyMsg) {
                 const empty = doc.createElement("div");
                 empty.className = "empty";
@@ -283,7 +289,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
                     if (keypressCounter === savedKeypressCounter && elements) {
                         items = elements;
                         inputValue = val;
-                        selected = items.length > 0 ? items[0] : undefined;
+                        selected = items.length > 0 && autoselectfirst ? items[0] : undefined;
                         update();
                     }
                 });
@@ -301,7 +307,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
         const elements = container.getElementsByClassName("selected");
         if (elements.length > 0) {
             let element = elements[0] as HTMLDivElement;
-            
+
             // make group visible
             const previous = element.previousElementSibling as HTMLDivElement;
             if (previous && previous.className.indexOf("group") !== -1 && !previous.previousElementSibling) {
@@ -328,7 +334,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
         if (items.length < 1) {
             selected = undefined;
         } else {
-            if (selected === items[0]) {
+            if (selected === items[0] || selected === undefined) {
                 selected = items[items.length - 1];
             } else {
                 for (let i = items.length - 1; i > 0; i--) {
@@ -367,7 +373,6 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
 
     function keydown(ev: KeyboardEvent): void {
         const keyCode = ev.which || ev.keyCode || 0;
-
         if (keyCode === Keys.Up || keyCode === Keys.Down || keyCode === Keys.Esc) {
             const containerIsDisplayed = containerDisplayed();
 
@@ -391,9 +396,23 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             return;
         }
 
-        if (keyCode === Keys.Enter && selected) {
-            settings.onSelect(selected, input);
-            clear();
+        if (keyCode === Keys.Enter) {
+            if (strict && selected) {
+                settings.onSelect(selected, input);
+                clear();
+            }
+            if (!strict) {
+                const freeTextSelect = {label: input.value} as T;
+                if (!selected) {
+                    if (onFreeTextSelect) {
+                        onFreeTextSelect(freeTextSelect, input);
+                    }
+                    settings.onSelect(freeTextSelect, input);
+                } else {
+                    settings.onSelect(selected, input);
+                }
+                clear();
+            }
         }
     }
 
