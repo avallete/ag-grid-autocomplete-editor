@@ -48,8 +48,7 @@
     "select"
   ],
   "dependencies": {
-    "ag-grid-community": "^20.2.0",
-    "autocompleter": "^4.0.2"
+    "ag-grid-community": "^20.2.0"
   },
   "devDependencies": {
     "@types/node": "^11.13.0",

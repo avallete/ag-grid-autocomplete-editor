@@ -1,9 +1,8 @@
-import {AutocompleteItem} from "autocompleter";
 import {Constants, GridOptionsWrapper, Autowired, IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent, SuppressKeyboardEventParams} from "ag-grid-community";
 
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
-const autocomplete = require("autocompleter");
+import autocomplete, {AutocompleteItem} from './autocompleter/autocomplete';
 
 export interface DataFormat extends AutocompleteItem {
     value: number | string;
@@ -38,9 +37,12 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 }
 
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
-    autocomplete?: IAutocompleterSettings<AutocompleteClient>,
-    selectData: DataFormat[],
-    placeholder?: string
+    autocomplete?: IAutocompleterSettings<AutocompleteClient>;
+    selectData: DataFormat[];
+    placeholder?: string;
+    strict: boolean;
+    autoselectfirst: boolean;
+    freeTextEntered: (cellEditor: AutocompleteSelectCellEditor,  item: AutocompleteClient) => void;
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
