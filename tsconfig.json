@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "*": ["types/*"] },
     "noImplicitAny": true,
     "module": "es6",
     "target": "es5",

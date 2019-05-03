@@ -25,6 +25,10 @@ You can configure and customize the cell and behavior with the following `cellEd
     - `className`: (`same as classical autocompleter`) default 'ag-cell-editor-autocomplete'
     - `minLength`: (`same as classical autocompleter`) default 1
     - `emptyMsg`: (`same as classical autocompleter`) default 'None'
+    - `strict`: (` decide if the user can put free text or not`) default true.
+    - `autoselectfirst`: (`decide the default behavior of the select (if the first row must be automatically selected or not)`): default true
+    - `onFreeTextSelect`: (`function called only if the selected text does not
+                            exist on the actual select options. Must be use with strict=false`): optional Must be use with strict=false.
     - `onSelect`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
     - `fetch`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
     - `debounceWaitMs`: (`same as classical autocompleter`) default 200
@@ -100,8 +104,39 @@ import 'ag-grid-autocomplete-editor/main.css';
 }
 ```
 
+
+### Simple autocompletion who allow user to enter any text
+ ```js
+import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
+import 'ag-grid-autocomplete-editor/main.css';
+...
+{
+    headerName: "Already present data selector",
+    field: "data",
+    cellEditor: AutocompleteSelectCellEditor,
+    cellEditorParams: {
+        selectData: [
+            { label: 'Canada', value: 'CA', group: 'North America' },
+            { label: 'United States', value: 'US', group: 'North America' },
+            { label: 'Uzbekistan', value: 'UZ', group: 'Asia' },
+        ],
+        placeholder: 'Select an option',
+        autocomplete: {
+            strict: false,
+            autoselectfirst: false,
+        }
+    },
+    valueFormatter: (params) => {
+        if (params.value) {
+            return params.value.label || params.value.value || params.value;
+        }
+        return "";
+    },
+    editable: true,
+}
+```
+
 ## Dependencies
- - [autocompleter](https://github.com/kraaden/autocomplete) 
  - [ag-Grid](https://github.com/ag-grid/ag-grid)
 
 ## Thank's to
