@@ -1,6 +1,6 @@
-import { AutocompleteItem } from "autocompleter";
-import { IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent } from "ag-grid-community";
+import { IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent } from 'ag-grid-community';
 import './ag-grid-autocomplete-editor.scss';
+import { AutocompleteItem } from './autocompleter/autocomplete';
 export interface DataFormat extends AutocompleteItem {
     value: number | string;
     label: string;
@@ -13,6 +13,9 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
     className?: string;
     minLength?: number;
     emptyMsg?: string;
+    strict?: boolean;
+    autoselectfirst?: boolean;
+    onFreeTextSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     fetch?: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;

@@ -1,9 +1,17 @@
-import {AutocompleteItem} from "autocompleter";
-import {Constants, GridOptionsWrapper, Autowired, IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent, SuppressKeyboardEventParams} from "ag-grid-community";
+import {
+    Autowired,
+    Constants,
+    GridOptionsWrapper,
+    IAfterGuiAttachedParams,
+    ICellEditorComp,
+    ICellEditorParams,
+    PopupComponent,
+    SuppressKeyboardEventParams
+} from 'ag-grid-community';
 
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
-const autocomplete = require("autocompleter");
+import autocomplete, {AutocompleteItem} from './autocompleter/autocomplete';
 
 export interface DataFormat extends AutocompleteItem {
     value: number | string;
@@ -19,6 +27,9 @@ interface IDefaultAutocompleterSettings<T extends AutocompleteItem> {
     className: string;
     minLength: number;
     emptyMsg: string;
+    strict: boolean;
+    autoselectfirst: boolean;
+    onFreeTextSelect: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     onSelect: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     fetch: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs: number;
@@ -31,6 +42,9 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
     className?: string;
     minLength?: number;
     emptyMsg?: string;
+    strict?: boolean;
+    autoselectfirst?: boolean;
+    onFreeTextSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     fetch?: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;
@@ -38,9 +52,9 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 }
 
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
-    autocomplete?: IAutocompleterSettings<AutocompleteClient>,
-    selectData: DataFormat[],
-    placeholder?: string
+    autocomplete?: IAutocompleterSettings<AutocompleteClient>;
+    selectData: DataFormat[];
+    placeholder?: string;
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
@@ -60,8 +74,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
     private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
         let keyCode = params.event.keyCode;
-        let gridShouldDoNothing = params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER);
-        return gridShouldDoNothing;
+        return params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER);
     }
 
     private static getStartValue(params: IAutocompleteSelectCellEditorParams) {
@@ -76,7 +89,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
 
     public init(params: IAutocompleteSelectCellEditorParams) {
         const defaultSettings: IDefaultAutocompleterSettings<AutocompleteClient> = {
-            render: function (cellEditor, item: AutocompleteClient, value) {
+            render: function (cellEditor: AutocompleteSelectCellEditor, item: AutocompleteClient, value) {
                 let itemElement = document.createElement("div");
                 let regex = new RegExp(value, 'gi');
                 let fieldItem = document.createElement('span');
@@ -99,6 +112,10 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             className: 'ag-cell-editor-autocomplete',
             minLength: 1,
             emptyMsg: "None",
+            strict: true,
+            autoselectfirst: true,
+            onFreeTextSelect: function () {
+            },
             onSelect: function (cellEditor, item: AutocompleteClient) {
                 cellEditor.currentItem = item;
                 cellEditor.focusOut();
@@ -124,7 +141,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         this.eInput.placeholder = params.placeholder || '';
         this.eInput.value = AutocompleteSelectCellEditor.getStartValue(params);
 
-        const autocompleteParams = params.autocomplete || {};
+        const autocompleteParams = {...defaultSettings, ...params.autocomplete};
 
         this.autocompleter = autocomplete({
             input: this.eInput,
@@ -143,6 +160,14 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             className: autocompleteParams.className || defaultSettings.className,
             minLength: autocompleteParams.minLength || defaultSettings.minLength,
             emptyMsg: autocompleteParams.emptyMsg || defaultSettings.emptyMsg,
+            strict: autocompleteParams.strict,
+            autoselectfirst: autocompleteParams.autoselectfirst,
+            onFreeTextSelect: (item: AutocompleteClient, input: HTMLInputElement) => {
+                if (autocompleteParams.onFreeTextSelect) {
+                    return autocompleteParams.onFreeTextSelect(this, item, input);
+                }
+                return defaultSettings.onFreeTextSelect(this, item, input);
+            },
             onSelect: (item: AutocompleteClient, input: HTMLInputElement) => {
                 if (autocompleteParams.onSelect) {
                     return autocompleteParams.onSelect(this, item, input);
