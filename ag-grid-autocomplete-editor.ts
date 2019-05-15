@@ -30,7 +30,7 @@ interface IDefaultAutocompleterSettings<T extends AutocompleteItem> {
     strict: boolean;
     autoselectfirst: boolean;
     onFreeTextSelect: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
-    onSelect: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
+    onSelect: (cellEditor: AutocompleteSelectCellEditor, item: T | undefined, input: HTMLInputElement) => void;
     fetch: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs: number;
     customize: (cellEditor: AutocompleteSelectCellEditor, input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => void;
@@ -45,7 +45,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
     strict?: boolean;
     autoselectfirst?: boolean;
     onFreeTextSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
-    onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
+    onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T | undefined, input: HTMLInputElement) => void;
     fetch?: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;
     customize?: (cellEditor: AutocompleteSelectCellEditor, input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => void;
@@ -53,8 +53,9 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>;
-    selectData: DataFormat[];
+    selectData: Array<DataFormat>;
     placeholder?: string;
+    required?: boolean;
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
@@ -62,6 +63,8 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     private readonly eInput: HTMLInputElement;
     public currentItem?: DataFormat;
     private autocompleter?: any;
+    private required: boolean = false;
+    private stopEditing?: (cancel?: boolean) => void;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper?: GridOptionsWrapper;
 
@@ -74,7 +77,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
     private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
         let keyCode = params.event.keyCode;
-        return params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER);
+        return params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER || keyCode === Constants.KEY_TAB);
     }
 
     private static getStartValue(params: IAutocompleteSelectCellEditorParams) {
@@ -88,6 +91,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
 
     public init(params: IAutocompleteSelectCellEditorParams) {
+        this.stopEditing = params.stopEditing;
         const defaultSettings: IDefaultAutocompleterSettings<AutocompleteClient> = {
             render: function (cellEditor: AutocompleteSelectCellEditor, item: AutocompleteClient, value) {
                 let itemElement = document.createElement("div");
@@ -116,9 +120,8 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             autoselectfirst: true,
             onFreeTextSelect: function () {
             },
-            onSelect: function (cellEditor, item: AutocompleteClient) {
+            onSelect: function (cellEditor, item: AutocompleteClient | undefined) {
                 cellEditor.currentItem = item;
-                cellEditor.focusOut();
             },
             fetch: (cellEditor, text, callback) => {
                 let items = params.selectData || [];
@@ -168,11 +171,20 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 }
                 return defaultSettings.onFreeTextSelect(this, item, input);
             },
-            onSelect: (item: AutocompleteClient, input: HTMLInputElement) => {
+            onSelect: (item: AutocompleteClient | undefined, input: HTMLInputElement, event: KeyboardEvent | MouseEvent) => {
+                let result: any;
                 if (autocompleteParams.onSelect) {
-                    return autocompleteParams.onSelect(this, item, input);
+                    result = autocompleteParams.onSelect(this, item, input);
+                    if (event instanceof KeyboardEvent) {
+                        this.handleTabEvent(event);
+                    }
+                    return result;
                 }
-                return defaultSettings.onSelect(this, item, input);
+                result = defaultSettings.onSelect(this, item, input);
+                if (event instanceof KeyboardEvent) {
+                    this.handleTabEvent(event);
+                }
+                return result;
             },
             fetch: (text: string, update: (items: AutocompleteClient[] | false) => void) => {
                 if (autocompleteParams.fetch) {
@@ -189,24 +201,46 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             }
         });
 
-        // we don't want to add this if full row editing, otherwise selecting will stop the
-        // full row editing.
-        if (this.gridOptionsWrapper && !this.gridOptionsWrapper.isFullRowEdit()) {
-            this.addDestroyableEventListener(this.eInput, 'change', () => params.stopEditing());
+        if (params.required) {
+            this.required = true;
         }
         if (!params.colDef.suppressKeyboardEvent) {
             params.colDef.suppressKeyboardEvent = AutocompleteSelectCellEditor.suppressKeyboardEvent;
         }
     }
 
+    handleTabEvent(event: KeyboardEvent) {
+        const keyCode = event.which || event.keyCode || 0;
+        if (keyCode === Constants.KEY_TAB && this.gridOptionsWrapper) {
+            if (event.shiftKey) {
+                this.gridOptionsWrapper.getApi()!.tabToPreviousCell();
+            } else {
+                this.gridOptionsWrapper.getApi()!.tabToNextCell();
+            }
+        } else {
+            this.destroy();
+        }
+    }
+
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        if (this.focusAfterAttached) {
-            this.eInput.focus();
+        if (!this.focusAfterAttached) { return; }
+
+        const eInput = this.eInput;
+        eInput.focus();
+        eInput.select();
+        // when we started editing, we want the caret at the end, not the start.
+        // this comes into play in two scenarios: a) when user hits F2 and b)
+        // when user hits a printable character, then on IE (and only IE) the caret
+        // was placed after the first character, thus 'apply' would end up as 'pplea'
+        const length = eInput.value ? eInput.value.length : 0;
+        if (length > 0) {
+            eInput.setSelectionRange(length, length);
         }
     }
 
     focusIn(): void {
-        this.eInput.focus()
+        this.eInput.focus();
+        this.eInput.select();
     }
 
     focusOut(): void {
@@ -214,14 +248,23 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         this.autocompleter.destroy();
     }
 
-    getValue(): DataFormat {
-        return this.currentItem || {value: '', label: ''};
+    destroy(): void {
+        this.focusOut();
+        if (this.stopEditing) {
+            this.stopEditing();
+        }
+    }
+
+    getValue(): DataFormat | undefined {
+        return this.currentItem;
     }
 
     isCancelAfterEnd(): boolean {
-        return !this.currentItem;
+        if (this.required) {
+            return !this.currentItem;
+        }
+        return false;
     }
-
     isCancelBeforeStart(): boolean {
         return false;
     }
