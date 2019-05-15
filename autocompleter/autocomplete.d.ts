@@ -12,7 +12,7 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     strict: boolean;
     autoselectfirst: boolean;
     onFreeTextSelect?: (item: T, input: HTMLInputElement) => void;
-    onSelect: (item: T, input: HTMLInputElement) => void;
+    onSelect: (item: T | undefined, input: HTMLInputElement, event: KeyboardEvent | MouseEvent) => void;
     fetch: (text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;
     /**
