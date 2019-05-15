@@ -13,7 +13,6 @@ module.exports = {
 
     externals: {
         'ag-grid-community': 'ag-grid-community',
-        'autocompleter': 'autocompleter'
     },
 
     output: {

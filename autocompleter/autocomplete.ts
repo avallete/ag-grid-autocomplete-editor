@@ -19,7 +19,7 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     strict: boolean;
     autoselectfirst: boolean;
     onFreeTextSelect?: (item: T, input: HTMLInputElement) => void;
-    onSelect: (item: T, input: HTMLInputElement) => void;
+    onSelect: (item: T | undefined, input: HTMLInputElement, event: KeyboardEvent | MouseEvent) => void;
     fetch: (text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;
     /**
@@ -207,7 +207,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             const div = render(item, inputValue);
             if (div) {
                 div.addEventListener("click", function(ev: MouseEvent): void {
-                    settings.onSelect(item, input);
+                    settings.onSelect(item, input, ev);
                     clear();
                     ev.preventDefault();
                     ev.stopPropagation();
@@ -225,6 +225,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
                 empty.className = "empty";
                 empty.textContent = settings.emptyMsg;
                 container.appendChild(empty);
+                selected = undefined;
             } else {
                 clear();
                 return;
@@ -377,6 +378,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             const containerIsDisplayed = containerDisplayed();
 
             if (keyCode === Keys.Esc) {
+                settings.onSelect(undefined, input, ev);
                 clear();
             } else {
                 if (!containerDisplayed || items.length < 1) {
@@ -396,9 +398,9 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             return;
         }
 
-        if (keyCode === Keys.Enter) {
-            if (strict && selected) {
-                settings.onSelect(selected, input);
+        if (keyCode === Keys.Enter || keyCode ===  Keys.Tab) {
+            if (strict) {
+                settings.onSelect(selected, input, ev);
                 clear();
             }
             if (!strict) {
@@ -407,9 +409,9 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
                     if (onFreeTextSelect) {
                         onFreeTextSelect(freeTextSelect, input);
                     }
-                    settings.onSelect(freeTextSelect, input);
+                    settings.onSelect(freeTextSelect, input, ev);
                 } else {
-                    settings.onSelect(selected, input);
+                    settings.onSelect(selected, input, ev);
                 }
                 clear();
             }
