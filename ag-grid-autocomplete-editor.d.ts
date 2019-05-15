@@ -16,30 +16,35 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
     strict?: boolean;
     autoselectfirst?: boolean;
     onFreeTextSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
-    onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
+    onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T | undefined, input: HTMLInputElement) => void;
     fetch?: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
     debounceWaitMs?: number;
     customize?: (cellEditor: AutocompleteSelectCellEditor, input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => void;
 }
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>;
-    selectData: DataFormat[];
+    selectData: Array<DataFormat>;
     placeholder?: string;
+    required?: boolean;
 }
 export declare class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached;
     private readonly eInput;
     currentItem?: DataFormat;
     private autocompleter?;
+    private required;
+    private stopEditing?;
     private gridOptionsWrapper?;
     constructor();
     private static suppressKeyboardEvent;
     private static getStartValue;
     init(params: IAutocompleteSelectCellEditorParams): void;
+    handleTabEvent(event: KeyboardEvent): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     focusIn(): void;
     focusOut(): void;
-    getValue(): DataFormat;
+    destroy(): void;
+    getValue(): DataFormat | undefined;
     isCancelAfterEnd(): boolean;
     isCancelBeforeStart(): boolean;
     isPopup(): boolean;
