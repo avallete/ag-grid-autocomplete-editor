@@ -11,7 +11,7 @@ import {
 
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
-import autocomplete, {AutocompleteItem} from './autocompleter/autocomplete';
+import autocomplete, {AutocompleteItem, EventTrigger} from './autocompleter/autocomplete';
 
 export interface DataFormat extends AutocompleteItem {
     value: number | string;
@@ -31,8 +31,9 @@ interface IDefaultAutocompleterSettings<T extends AutocompleteItem> {
     autoselectfirst: boolean;
     onFreeTextSelect: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     onSelect: (cellEditor: AutocompleteSelectCellEditor, item: T | undefined, input: HTMLInputElement) => void;
-    fetch: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
+    fetch: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void, trigger?: EventTrigger) => void;
     debounceWaitMs: number;
+    showOnFocus: boolean;
     customize: (cellEditor: AutocompleteSelectCellEditor, input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => void;
 }
 
@@ -46,7 +47,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
     autoselectfirst?: boolean;
     onFreeTextSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T, input: HTMLInputElement) => void;
     onSelect?: (cellEditor: AutocompleteSelectCellEditor, item: T | undefined, input: HTMLInputElement) => void;
-    fetch?: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void) => void;
+    fetch?: (cellEditor: AutocompleteSelectCellEditor, text: string, update: (items: T[] | false) => void, trigger?: EventTrigger) => void;
     debounceWaitMs?: number;
     customize?: (cellEditor: AutocompleteSelectCellEditor, input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => void;
 }
@@ -93,6 +94,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     public init(params: IAutocompleteSelectCellEditorParams) {
         this.stopEditing = params.stopEditing;
         const defaultSettings: IDefaultAutocompleterSettings<AutocompleteClient> = {
+            showOnFocus: false,
             render: function (cellEditor: AutocompleteSelectCellEditor, item: AutocompleteClient, value) {
                 let itemElement = document.createElement("div");
                 let regex = new RegExp(value, 'gi');
@@ -165,6 +167,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             emptyMsg: autocompleteParams.emptyMsg || defaultSettings.emptyMsg,
             strict: autocompleteParams.strict,
             autoselectfirst: autocompleteParams.autoselectfirst,
+            showOnFocus: autocompleteParams.showOnFocus,
             onFreeTextSelect: (item: AutocompleteClient, input: HTMLInputElement) => {
                 if (autocompleteParams.onFreeTextSelect) {
                     return autocompleteParams.onFreeTextSelect(this, item, input);
@@ -186,11 +189,11 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 }
                 return result;
             },
-            fetch: (text: string, update: (items: AutocompleteClient[] | false) => void) => {
+            fetch: (text: string, update: (items: AutocompleteClient[] | false) => void, trigger: EventTrigger) => {
                 if (autocompleteParams.fetch) {
-                    return autocompleteParams.fetch(this, text, update)
+                    return autocompleteParams.fetch(this, text, update, trigger)
                 }
-                return defaultSettings.fetch(this, text, update);
+                return defaultSettings.fetch(this, text, update, trigger);
             },
             debounceWaitMs: autocompleteParams.debounceWaitMs || defaultSettings.debounceWaitMs,
             customize: (input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => {

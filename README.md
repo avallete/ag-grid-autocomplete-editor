@@ -25,6 +25,7 @@ You can configure and customize the cell and behavior with the following `cellEd
     - `renderGroup`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter. 
     - `className`: (`same as classical autocompleter`) default 'ag-cell-editor-autocomplete'
     - `minLength`: (`same as classical autocompleter`) default 1
+    - `showOnFocus`: (`same as classical autocompleter`) default false trigger first fetch call when input is focused
     - `emptyMsg`: (`same as classical autocompleter`) default 'None'
     - `strict`: (` decide if the user can put free text or not`) default true.
     - `autoselectfirst`: (`decide the default behavior of the select (if the first row must be automatically selected or not)`): default true
