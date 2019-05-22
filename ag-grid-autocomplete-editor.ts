@@ -180,12 +180,16 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                     result = autocompleteParams.onSelect(this, item, input);
                     if (event instanceof KeyboardEvent) {
                         this.handleTabEvent(event);
+                    } else {
+                        this.destroy();
                     }
                     return result;
                 }
                 result = defaultSettings.onSelect(this, item, input);
                 if (event instanceof KeyboardEvent) {
                     this.handleTabEvent(event);
+                } else {
+                    this.destroy();
                 }
                 return result;
             },
