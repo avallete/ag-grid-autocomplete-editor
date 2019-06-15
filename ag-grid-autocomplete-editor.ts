@@ -163,7 +163,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 return defaultSettings.renderGroup(this, name, currentValue);
             },
             className: autocompleteParams.className || defaultSettings.className,
-            minLength: autocompleteParams.minLength || defaultSettings.minLength,
+            minLength: autocompleteParams.minLength !== undefined ? autocompleteParams.minLength : defaultSettings.minLength,
             emptyMsg: autocompleteParams.emptyMsg || defaultSettings.emptyMsg,
             strict: autocompleteParams.strict,
             autoselectfirst: autocompleteParams.autoselectfirst,
