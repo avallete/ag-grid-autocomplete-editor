@@ -102,7 +102,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 fieldItem.innerHTML = item.label.replace(regex, function (match: string) {
                     return "<strong>" + match + "</strong>"
                 });
-                itemElement.append(fieldItem);
+                itemElement.appendChild(fieldItem);
                 cellEditor.addDestroyableEventListener(itemElement, 'mousedown', (event: MouseEvent) => {
                     cellEditor.currentItem = item;
                     event.stopPropagation();
