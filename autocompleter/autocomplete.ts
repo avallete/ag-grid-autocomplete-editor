@@ -79,7 +79,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
 
     let items: T[] = [];
     let inputValue = "";
-    const minLen = settings.minLength || 2;
+    const minLen = settings.minLength !== undefined ? settings.minLength : 2;
     const showOnFocus = settings.showOnFocus;
     let selected: T | undefined;
     let keypressCounter = 0;
