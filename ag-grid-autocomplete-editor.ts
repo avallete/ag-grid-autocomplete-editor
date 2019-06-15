@@ -102,7 +102,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 fieldItem.innerHTML = item.label.replace(regex, function (match: string) {
                     return "<strong>" + match + "</strong>"
                 });
-                itemElement.append(fieldItem);
+                itemElement.appendChild(fieldItem);
                 cellEditor.addDestroyableEventListener(itemElement, 'mousedown', (event: MouseEvent) => {
                     cellEditor.currentItem = item;
                     event.stopPropagation();
@@ -163,7 +163,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 return defaultSettings.renderGroup(this, name, currentValue);
             },
             className: autocompleteParams.className || defaultSettings.className,
-            minLength: autocompleteParams.minLength || defaultSettings.minLength,
+            minLength: autocompleteParams.minLength !== undefined ? autocompleteParams.minLength : defaultSettings.minLength,
             emptyMsg: autocompleteParams.emptyMsg || defaultSettings.emptyMsg,
             strict: autocompleteParams.strict,
             autoselectfirst: autocompleteParams.autoselectfirst,
