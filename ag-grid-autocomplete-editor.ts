@@ -54,7 +54,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>;
-    selectData: Array<DataFormat>;
+    selectData: Array<DataFormat> | ((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>);
     placeholder?: string;
     required?: boolean;
 }
@@ -126,7 +126,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 cellEditor.currentItem = item;
             },
             fetch: (cellEditor, text, callback) => {
-                let items = params.selectData || [];
+                let items = this.getSelectData(params);
                 let match = text.toLowerCase() || cellEditor.eInput.value.toLowerCase();
                 callback(items.filter(function (n) {
                     return n.label.toLowerCase().indexOf(match) !== -1;
@@ -278,5 +278,17 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
 
     isPopup(): boolean {
         return false;
+    }
+
+    getSelectData(params: IAutocompleteSelectCellEditorParams): Array<DataFormat> {
+        if (typeof params.selectData === 'function') {
+            return params.selectData(params);
+        } 
+
+        if (typeof params.selectData === 'object' && params.selectData.length) {
+            return params.selectData as Array<DataFormat>;
+        }
+
+        return [];
     }
 }
