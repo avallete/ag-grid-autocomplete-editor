@@ -16,10 +16,10 @@ The goal of this package is to provide an easy way to have autocompleted cellEdi
 This package provide a new cellEditor named: `AutocompleteSelectCellEditor`.
 You can configure and customize the cell and behavior with the following `cellEditorParams`:
 
-- `selectData`: is a list of data matching the type `{value: string, label: string, group?: string}`, if no other parameters provided
-   the autcompletion will use this data with a simple `.filter`. Basically, if you already have local data, you probably don't need anything else.
+- `selectData`: is a list of data matching the type `{value: string, label: string, group?: string}`. Or a function type: `((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>)`.
+   If no other parameters provided the autcompletion will use this data with a simple `.filter`. Basically, if you already have local data, you probably don't need anything else.
 - `placeholder`: the placeholder is a `string` who will be put onto the input field.
-- `requred`: (`boolean = false`) To know if editor should cancel change if the value is undefined (no selection made).
+- `required`: (`boolean = false`) To know if editor should cancel change if the value is undefined (no selection made).
 - `autocomplete`: please see [autocompleter](https://github.com/kraaden/autocomplete) for more details about the following parameters
     - `render`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
     - `renderGroup`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter. 
