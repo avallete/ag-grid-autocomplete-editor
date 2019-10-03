@@ -285,7 +285,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             return params.selectData(params);
         } 
 
-        if (typeof params.selectData === 'object' && params.selectData.length) {
+        if (Array.isArray(params.selectData)) {
             return params.selectData as Array<DataFormat>;
         }
 
