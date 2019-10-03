@@ -23,7 +23,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
 }
 export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     autocomplete?: IAutocompleterSettings<AutocompleteClient>;
-    selectData: Array<DataFormat>;
+    selectData: Array<DataFormat> | ((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>);
     placeholder?: string;
     required?: boolean;
 }
@@ -48,4 +48,5 @@ export declare class AutocompleteSelectCellEditor extends PopupComponent impleme
     isCancelAfterEnd(): boolean;
     isCancelBeforeStart(): boolean;
     isPopup(): boolean;
+    getSelectData(params: IAutocompleteSelectCellEditorParams): Array<DataFormat>;
 }
