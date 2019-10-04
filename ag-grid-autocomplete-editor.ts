@@ -57,6 +57,7 @@ export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     selectData: Array<DataFormat> | ((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>);
     placeholder?: string;
     required?: boolean;
+    clearInputOnStart?: boolean;
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
@@ -88,7 +89,10 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         } else if (params.charPress) {
             return params.charPress;
         }
-        return params.formatValue(params.value);
+
+        return params.clearInputOnStart
+            ? ''
+            : params.formatValue(params.value)
     }
 
     public init(params: IAutocompleteSelectCellEditorParams) {

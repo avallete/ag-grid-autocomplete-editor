@@ -26,6 +26,7 @@ export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
     selectData: Array<DataFormat> | ((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>);
     placeholder?: string;
     required?: boolean;
+    clearInputOnStart?: boolean;
 }
 export declare class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
     private focusAfterAttached;

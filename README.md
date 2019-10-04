@@ -16,10 +16,10 @@ The goal of this package is to provide an easy way to have autocompleted cellEdi
 This package provide a new cellEditor named: `AutocompleteSelectCellEditor`.
 You can configure and customize the cell and behavior with the following `cellEditorParams`:
 
-- `selectData`: is a list of data matching the type `{value: string, label: string, group?: string}`. Or a function type: `((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>)`.
-   If no other parameters provided the autcompletion will use this data with a simple `.filter`. Basically, if you already have local data, you probably don't need anything else.
+- `selectData`: is a static array `Array<DataFormat>` or a function `((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>)` that returns data matching the type `{value: string | number, label: string, group?: string}`. If no other parameters provided the autcompletion will use this data with a simple `.filter`. Basically, if you already have local data, you probably don't need anything else.
 - `placeholder`: the placeholder is a `string` who will be put onto the input field.
 - `required`: (`boolean = false`) To know if editor should cancel change if the value is undefined (no selection made).
+- `clearInputOnStart`: (`boolean = true`) To know if the editor should clear out the input box when editing starts. Useful in combination with the `required = true` flag if you want to force the user to restart typing from the beginning each time editing starts.
 - `autocomplete`: please see [autocompleter](https://github.com/kraaden/autocomplete) for more details about the following parameters
     - `render`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
     - `renderGroup`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter. 
@@ -39,7 +39,7 @@ You can configure and customize the cell and behavior with the following `cellEd
  
 ## Example
  
-### Simple autocompletion from datasource
+### Simple autocompletion from static datasource
  ```js
 import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
 import 'ag-grid-autocomplete-editor/main.css';
@@ -127,6 +127,53 @@ import 'ag-grid-autocomplete-editor/main.css';
             strict: false,
             autoselectfirst: false,
         }
+    },
+    valueFormatter: (params) => {
+        if (params.value) {
+            return params.value.label || params.value.value || params.value;
+        }
+        return "";
+    },
+    editable: true,
+}
+```
+
+
+### Autocompletion from dynamic datasource with reference to row data
+ ```js
+import {AutocompleteSelectCellEditor, IAutocompleteSelectCellEditorParams} from 'ag-grid-autocomplete-editor';
+import 'ag-grid-autocomplete-editor/main.css';
+...
+{
+    headerName: "Already present data selector",
+    field: "data",
+    cellEditor: AutocompleteSelectCellEditor,
+    cellEditorParams: {
+        autocomplete: {
+            minLength: 0
+        },
+        clearInputOnStart: true,
+        required: true,
+        selectData: (params: IAutocompleteSelectCellEditorParams) => {
+            switch (params.data.anotherRowProperty)
+            {
+                case "Location":
+                    return [
+                        { label: 'Canada', value: 'CA', group: 'North America' },
+                        { label: 'United States', value: 'US', group: 'North America' },
+                        { label: 'Uzbekistan', value: 'UZ', group: 'Asia' }
+                    ];
+                case "Car"
+                    return [
+                        { label: 'Audi R8', value: 'R8' },
+                        { label: 'Bugatti Chiron', value: 'Chiron' },
+                        { label: 'Volkswagen Beetle', value: 'Beetle'}
+                    ];
+            }
+
+            return [];
+        },
+        placeholder: 'Select an option',
     },
     valueFormatter: (params) => {
         if (params.value) {
