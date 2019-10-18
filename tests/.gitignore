@@ -1,0 +1,6 @@
+# test results
+cypress/videos
+cypress/screenshots
+
+# node
+node_modules
