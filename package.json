@@ -4,6 +4,14 @@
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
   "main": "ag-grid-autocomplete-editor.js",
+  "files": [
+      "/autocompleter",
+      "/ag-grid-autocomplete-editor.d.ts",
+      "/ag-grid-autocomplete-editor.ts",
+      "/ag-grid-autocomplete-editor.js",
+      "/ag-grid-autocomplete-editor.js.map",
+      "/ag-grid-autocomplete-editor.scss"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/avallete/ag-grid-autocomplete-editor.git"
