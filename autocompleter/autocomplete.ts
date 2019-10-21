@@ -60,11 +60,11 @@ const enum Keys {
     Tab = 9
 }
 
-export default function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings<T>): AutocompleteResult {
+export default function autocomplete<T extends AutocompleteItem>(this: any, settings: AutocompleteSettings<T>): AutocompleteResult {
 
     // just an alias to minimize JS file size
-    const doc = document;
-
+    // use settings.input.ownerDocument if possible, to avoid iFrame scopes confusion
+    const doc = settings.input.ownerDocument || window.document;
     const container: HTMLDivElement = doc.createElement("div");
     const containerStyle = container.style;
     const userAgent = navigator.userAgent;
