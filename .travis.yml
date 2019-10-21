@@ -16,4 +16,4 @@ cache:
 install:
   - npm run ci
 script:
-  - npm run test
+  - cd tests && npm run test --record

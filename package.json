@@ -18,7 +18,7 @@
   },
   "scripts": {
     "ci": "(npm ci && cd tests && npm ci)",
-    "test": "(cd tests && npm test)",
+    "test": "(cd tests && npm run test)",
     "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail --allow-js"
   },
