@@ -221,4 +221,91 @@ describe('autocomplete end-to-end selection tests', () => {
             expect(jQueryElement.val()).to.be.equal(selectData[1].label);
         });
     });
+    it('should select the first element with arrows keys and tab', function () {
+        const inputText = 'United';
+
+        cy.fixture('selectDatas/united.json').as('selectData');
+        // @ts-ignore
+        cy.visit('./static/autocomplete-test-sandbox.html');
+        // Get the input element and setup autocomplete to it
+        cy.get('#autocompleter')
+            .then((jQueryElement => {
+                const selectData = this.selectData;
+                autocomplete({
+                    autoselectfirst: false,
+                    fetch: function (search: string, update: <AutocompleteItem>(items: (AutocompleteItem[] | false)) => void, _: EventTrigger) {
+                        update(selectData);
+                    },
+                    onSelect: function (item: AutocompleteItem | undefined) {
+                        if (item && item.label) {
+                            jQueryElement.val(item.label)
+                        } else {
+                            jQueryElement.val('');
+                        }
+                    },
+                    strict: true,
+                    input: <HTMLInputElement>jQueryElement.get(0),
+                });
+
+            }));
+        // Type some text into the input and select the first element using arrow keys
+        cy.get('#autocompleter')
+            .type(inputText)
+            .type('{downarrow}')
+            .trigger('keydown', {
+                keyCode: 9,
+                which: 9,
+                shiftKey: false,
+                ctrlKey: false
+            });
+        // Should click on the first element on the list
+        cy.get('#autocompleter').then(jQueryElement => {
+            const selectData = this.selectData;
+            expect(jQueryElement.val()).to.be.equal(selectData[0].label);
+        });
+    });
+    it('should select the second element with arrows keys and tab', function () {
+        const inputText = 'United';
+
+        cy.fixture('selectDatas/united.json').as('selectData');
+        // @ts-ignore
+        cy.visit('./static/autocomplete-test-sandbox.html');
+        // Get the input element and setup autocomplete to it
+        cy.get('#autocompleter')
+            .then((jQueryElement => {
+                const selectData = this.selectData;
+                autocomplete({
+                    autoselectfirst: false,
+                    fetch: function (search: string, update: <AutocompleteItem>(items: (AutocompleteItem[] | false)) => void, _: EventTrigger) {
+                        update(selectData);
+                    },
+                    onSelect: function (item: AutocompleteItem | undefined) {
+                        if (item && item.label) {
+                            jQueryElement.val(item.label)
+                        } else {
+                            jQueryElement.val('');
+                        }
+                    },
+                    strict: true,
+                    input: <HTMLInputElement>jQueryElement.get(0),
+                });
+
+            }));
+        // Type some text into the input and select the first element using arrow keys
+        cy.get('#autocompleter')
+            .type(inputText)
+            .type('{downarrow}')
+            .type('{downarrow}')
+            .trigger('keydown', {
+                keyCode: 9,
+                which: 9,
+                shiftKey: false,
+                ctrlKey: false
+            });
+        // Should click on the first element on the list
+        cy.get('#autocompleter').then(jQueryElement => {
+            const selectData = this.selectData;
+            expect(jQueryElement.val()).to.be.equal(selectData[1].label);
+        });
+    });
 });
