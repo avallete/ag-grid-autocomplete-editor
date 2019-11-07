@@ -7,7 +7,7 @@ const devMode = false;
 
 module.exports = {
     mode: "production",
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'source-map',
 
     entry: './ag-grid-autocomplete-editor.ts',
 
