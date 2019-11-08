@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-autocomplete-editor",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
   "main": "ag-grid-autocomplete-editor.js",
@@ -17,8 +17,6 @@
     "url": "git+https://github.com/avallete/ag-grid-autocomplete-editor.git"
   },
   "scripts": {
-    "ci": "(npm ci && cd tests && npm ci)",
-    "test": "(cd tests && npm run test)",
     "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail --allow-js"
   },

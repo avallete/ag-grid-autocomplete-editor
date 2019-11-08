@@ -60,9 +60,9 @@ export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
+    public currentItem?: DataFormat;
     private focusAfterAttached: boolean = false;
     private readonly eInput: HTMLInputElement;
-    public currentItem?: DataFormat;
     private autocompleter?: any;
     private required: boolean = false;
     private stopEditing?: (cancel?: boolean) => void;
@@ -76,6 +76,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             this.eInput.value = this.currentItem.label || this.currentItem.value as string;
         }
     }
+
     private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
         let keyCode = params.event.keyCode;
         return params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER || keyCode === Constants.KEY_TAB);
@@ -207,7 +208,6 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
                 return defaultSettings.customize(this, input, inputRect, container, maxHeight);
             }
         });
-
         if (params.required) {
             this.required = true;
         }
@@ -230,7 +230,9 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
 
     afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        if (!this.focusAfterAttached) { return; }
+        if (!this.focusAfterAttached) {
+            return;
+        }
 
         const eInput = this.eInput;
         eInput.focus();
@@ -272,6 +274,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         }
         return false;
     }
+
     isCancelBeforeStart(): boolean {
         return false;
     }
@@ -283,7 +286,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     getSelectData(params: IAutocompleteSelectCellEditorParams): Array<DataFormat> {
         if (typeof params.selectData === 'function') {
             return params.selectData(params);
-        } 
+        }
 
         if (Array.isArray(params.selectData)) {
             return params.selectData as Array<DataFormat>;
