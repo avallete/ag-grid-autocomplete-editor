@@ -1,13 +1,13 @@
- /*
-  * https://github.com/kraaden/autocomplete
-  * Copyright (c) 2016 Denys Krasnoshchok
-  * MIT License
-  */
+/*
+ * https://github.com/kraaden/autocomplete
+ * Copyright (c) 2016 Denys Krasnoshchok
+ * MIT License
+ */
 
- export const enum EventTrigger {
-     Keyboard = 0,
-     Focus = 1
- }
+export const enum EventTrigger {
+    Keyboard = 0,
+    Focus = 1
+}
 
 export interface AutocompleteItem {
     label?: string;
@@ -64,7 +64,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
 
     // just an alias to minimize JS file size
     // use settings.input.ownerDocument if possible, to avoid iFrame scopes confusion
-    const doc = settings.input.ownerDocument || window.document;
+    let doc = settings.input.ownerDocument || window.document;
     const container: HTMLDivElement = doc.createElement("div");
     const containerStyle = container.style;
     const userAgent = navigator.userAgent;
@@ -83,7 +83,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
     const showOnFocus = settings.showOnFocus;
     let selected: T | undefined;
     let keypressCounter = 0;
-    let debounceTimer : number | undefined;
+    let debounceTimer: number | undefined;
 
     if (!settings.input) {
         throw new Error("input undefined");
@@ -117,6 +117,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
      * Attach the container to DOM
      */
     function attach(): void {
+        doc = settings.input.ownerDocument || window.document;
         if (!container.parentNode) {
             doc.body.appendChild(container);
         }
@@ -155,7 +156,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
 
         const inputRect = input.getBoundingClientRect();
         const top = inputRect.top + input.offsetHeight;
-        let maxHeight = window.innerHeight - top;
+        let maxHeight = doc.defaultView!.innerHeight - top;
 
         if (maxHeight < 0) {
             maxHeight = 0;
@@ -184,7 +185,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
 
         // function for rendering autocomplete suggestions
         // noinspection JSUnusedLocalSymbols
-        let render = function(item: T, currentValue: string): HTMLDivElement | undefined {
+        let render = function (item: T, currentValue: string): HTMLDivElement | undefined {
             const itemElement = doc.createElement("div");
             itemElement.textContent = item.label || "";
             return itemElement;
@@ -195,7 +196,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
 
         // function to render autocomplete groups
         // noinspection JSUnusedLocalSymbols
-        let renderGroup = function(groupName: string, currentValue: string): HTMLDivElement | undefined {
+        let renderGroup = function (groupName: string, currentValue: string): HTMLDivElement | undefined {
             const groupDiv = doc.createElement("div");
             groupDiv.textContent = groupName;
             return groupDiv;
@@ -207,7 +208,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
         const fragment = doc.createDocumentFragment();
         let prevGroup = "#9?$";
 
-        items.forEach(function(item: T): void {
+        items.forEach(function (item: T): void {
             if (item.group && item.group !== prevGroup) {
                 prevGroup = item.group;
                 const groupDiv = renderGroup(item.group, inputValue);
@@ -218,7 +219,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
             }
             const div = render(item, inputValue);
             if (div) {
-                div.addEventListener("click", function(ev: MouseEvent): void {
+                div.addEventListener("click", function (ev: MouseEvent): void {
                     settings.onSelect(item, input, ev);
                     clear();
                     ev.preventDefault();
@@ -381,7 +382,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
             return;
         }
 
-        if (keyCode === Keys.Enter || keyCode ===  Keys.Tab) {
+        if (keyCode === Keys.Enter || keyCode === Keys.Tab) {
             if (strict) {
                 settings.onSelect(selected, input, ev);
                 clear();
@@ -417,8 +418,8 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
         const val = input.value;
         if (val.length >= minLen || trigger === EventTrigger.Focus) {
             clearDebounceTimer();
-            debounceTimer = window.setTimeout(function(): void {
-                settings.fetch(val, function(elements: T[] | false): void {
+            debounceTimer = window.setTimeout(function (): void {
+                settings.fetch(val, function (elements: T[] | false): void {
                     if (keypressCounter === savedKeypressCounter && elements) {
                         items = elements;
                         inputValue = val;
@@ -450,7 +451,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
         input.removeEventListener("keydown", keydownEventHandler);
         input.removeEventListener(keyUpEventName, keyupEventHandler as EventListenerOrEventListenerObject);
         input.removeEventListener("blur", blurEventHandler);
-        window.removeEventListener("resize", resizeEventHandler);
+        doc.removeEventListener("resize", resizeEventHandler);
         doc.removeEventListener("scroll", scrollEventHandler, true);
         clearDebounceTimer();
         clear();
@@ -464,7 +465,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
     input.addEventListener(keyUpEventName, keyupEventHandler as EventListenerOrEventListenerObject);
     input.addEventListener("blur", blurEventHandler);
     input.addEventListener("focus", focusEventHandler);
-    window.addEventListener("resize", resizeEventHandler);
+    doc.addEventListener("resize", resizeEventHandler);
     doc.addEventListener("scroll", scrollEventHandler, true);
 
     return {
