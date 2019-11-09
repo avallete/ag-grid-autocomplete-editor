@@ -1,0 +1,43 @@
+{
+  "name": "cypress-ts",
+  "version": "0.0.0",
+  "description": "Quick start for Cypress + TypeScript",
+  "scripts": {
+    "start": "cypress open --browser chromium",
+    "test": "cypress run",
+    "update": "npm i cypress@latest typescript@latest ts-loader@latest webpack@latest @cypress/webpack-preprocessor@latest -S -E"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/basarat/cypress-ts.git"
+  },
+  "keywords": [
+    "cypress",
+    "typescript"
+  ],
+  "author": "bas@basarat.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/basarat/cypress-ts/issues"
+  },
+  "homepage": "https://github.com/basarat/cypress-ts#readme",
+  "dependencies": {
+    "ag-grid-autocomplete-editor": "file:../",
+    "ag-grid-community": "^21.2.2",
+    "cypress": "^3.6.1"
+  },
+  "devDependencies": {
+    "@cypress/webpack-preprocessor": "4.1.0",
+    "autoprefixer": "^9.6.5",
+    "css-loader": "^2.1.1",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.13.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-scss": "^2.0.0",
+    "sass-loader": "^7.3.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "6.2.0",
+    "typescript": "3.6.4",
+    "webpack": "4.41.2"
+  }
+}
