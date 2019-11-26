@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-autocomplete-editor",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
   "main": "ag-grid-autocomplete-editor.js",
@@ -10,7 +10,9 @@
     "/ag-grid-autocomplete-editor.ts",
     "/ag-grid-autocomplete-editor.js",
     "/ag-grid-autocomplete-editor.js.map",
-    "/ag-grid-autocomplete-editor.scss"
+    "/ag-grid-autocomplete-editor.scss",
+    "/main.css",
+    "/main.css.map"
   ],
   "repository": {
     "type": "git",
