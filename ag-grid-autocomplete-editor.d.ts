@@ -1,4 +1,4 @@
-import { IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent } from 'ag-grid-community';
+import { IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupComponent } from '@ag-grid-community/core';
 import './ag-grid-autocomplete-editor.scss';
 import { AutocompleteItem, EventTrigger } from './autocompleter/autocomplete';
 export interface DataFormat extends AutocompleteItem {
