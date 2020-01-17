@@ -12,7 +12,7 @@ module.exports = {
     entry: './ag-grid-autocomplete-editor.ts',
 
     externals: {
-        'ag-grid-community': 'ag-grid-community',
+        '@ag-grid-community/core': '@ag-grid-community/core',
     },
 
     output: {

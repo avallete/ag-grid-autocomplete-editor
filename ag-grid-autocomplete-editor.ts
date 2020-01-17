@@ -7,7 +7,7 @@ import {
     ICellEditorParams,
     PopupComponent,
     SuppressKeyboardEventParams
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
