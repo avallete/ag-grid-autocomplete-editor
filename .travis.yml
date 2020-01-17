@@ -14,6 +14,8 @@ cache:
     # we also need to cache folder with Cypress binary
     - ~/.cache
 install:
+  # First install dependencies of the project itself
+  - npm install -D
   - cd tests
   - npm install -D
 script:
