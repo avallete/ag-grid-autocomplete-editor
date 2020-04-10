@@ -38,3 +38,11 @@ $groupColor: #7f8fa6;
 .ag-cell-editor-autocomplete > div > * > strong {
   font-weight: bold !important;
 }
+
+// can be use to customize default agGridEditor wrapper
+.ag-cell-editor-autocomplete-wrapper {
+}
+
+// can be use to customize default agGridEditor input text editor
+.ag-cell-editor-autocomplete-input {
+}

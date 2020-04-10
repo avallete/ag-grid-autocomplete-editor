@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-autocomplete-editor",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
   "main": "ag-grid-autocomplete-editor.js",
@@ -57,23 +57,23 @@
     "select"
   ],
   "dependencies": {
-    "@ag-grid-community/core": "^22.1.0"
+    "@ag-grid-community/core": "^23.0.2"
   },
   "devDependencies": {
-    "@types/node": "^11.13.22",
-    "autoprefixer": "9.7.3",
-    "css-loader": "^2.1.1",
-    "mini-css-extract-plugin": "^0.5.0",
-    "node-sass": "^4.12.0",
+    "@types/node": "^13.11.1",
+    "autoprefixer": "9.7.6",
+    "css-loader": "^3.5.2",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
     "postcss-scss": "^2.0.0",
-    "sass-loader": "^7.3.1",
-    "style-loader": "^0.23.1",
-    "ts-loader": "6.2.1",
-    "typescript": "3.7.3",
-    "webpack": "4.41.2",
-    "webpack-cli": "3.3.10",
-    "webpack-dev-server": "3.9.0"
+    "sass-loader": "^8.0.2",
+    "style-loader": "^1.1.3",
+    "ts-loader": "6.2.2",
+    "typescript": "3.8.3",
+    "webpack": "4.42.1",
+    "webpack-cli": "3.3.11",
+    "webpack-dev-server": "3.10.3"
   },
   "types": "./ag-grid-autocomplete-editor.d.ts"
 }
