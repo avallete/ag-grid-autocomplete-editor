@@ -70,7 +70,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper?: GridOptionsWrapper;
 
     constructor() {
-        super('<div class="ag-cell-edit-input" style="padding: 0 !important;"><input class="ag-cell-edit-input" type="text"/></div>');
+        super('<div class="ag-wrapper ag-input-wrapper ag-text-field-input-wrapper ag-cell-editor-autocomplete-wrapper" style="padding: 0 !important;"><input class="ag-input-field-input ag-text-field-input ag-cell-editor-autocomplete-input" type="text"/></div>');
         this.eInput = this.getGui().querySelector('input') as HTMLInputElement;
         if (this.currentItem) {
             this.eInput.value = this.currentItem.label || this.currentItem.value as string;

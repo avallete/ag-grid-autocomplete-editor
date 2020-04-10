@@ -52,7 +52,7 @@ describe('ag-grid-autocomplete-editor end-to-end required option tests', () => {
         // Should select the first element and hit enter it to select
         cy.get('.ag-row-first > .ag-cell ').type('{downArrow}').type('{enter}');
         // input should have been closed
-        cy.get('div.ag-cell-edit-input > .ag-cell-edit-input').should('not.exist');
+        cy.get('div.ag-cell-editor-autocomplete-wrapper > .ag-cell-editor-autocomplete-input').should('not.exist');
         // Input should have been selected and sent to ag-grid
         cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('exist');
         cy.get('.ag-row-first > .ag-cell ').type('{del}').type('{enter}');
@@ -107,7 +107,7 @@ describe('ag-grid-autocomplete-editor end-to-end required option tests', () => {
         // Should select the first element and hit enter it to select
         cy.get('.ag-row-first > .ag-cell ').type('{downArrow}').type('{enter}');
         // input should have been closed
-        cy.get('div.ag-cell-edit-input > .ag-cell-edit-input').should('not.exist');
+        cy.get('div.ag-cell-editor-autocomplete-wrapper > .ag-cell-editor-autocomplete-input').should('not.exist');
         // Input should have been selected and sent to ag-grid
         cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('exist');
         cy.get('.ag-row-first > .ag-cell ').type('{del}').type('not a valid name').type('{enter}');
@@ -162,13 +162,13 @@ describe('ag-grid-autocomplete-editor end-to-end required option tests', () => {
         // Should select the first element and hit enter it to select
         cy.get('.ag-row-first > .ag-cell ').type('{downArrow}').type('{enter}');
         // input should have been closed
-        cy.get('div.ag-cell-edit-input > .ag-cell-edit-input').should('not.exist');
+        cy.get('div.ag-cell-editor-autocomplete-wrapper > .ag-cell-editor-autocomplete-input').should('not.exist');
         // Input should have been selected and sent to ag-grid
         cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('exist');
         cy.get('.ag-row-first > .ag-cell ').type('{enter}');
-        cy.get('div.ag-cell-edit-input > .ag-cell-edit-input').should('exist');
+        cy.get('div.ag-cell-editor-autocomplete-wrapper > .ag-cell-editor-autocomplete-input').should('exist');
         cy.get('.ag-row-first > .ag-cell ').type('{esc}');
-        cy.get('div.ag-cell-edit-input > .ag-cell-edit-input').should('not.exist');
+        cy.get('div.ag-cell-editor-autocomplete-wrapper > .ag-cell-editor-autocomplete-input').should('not.exist');
         cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('exist');
     });
 });
