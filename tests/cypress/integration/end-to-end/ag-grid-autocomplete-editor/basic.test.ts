@@ -781,4 +781,109 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
         cy.get('.ag-row-first > .ag-cell ').type('{del}').type('{enter}');
         cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('not.exist');
     });
+    it('should autofill input value with previously selected item label', function () {
+        cy.fixture('selectDatas/names.json').as('selectDatas');
+        // @ts-ignore
+        cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html');
+        cy.get('#myGrid')
+            .then((jQueryElement) => {
+                const rowDatas = [
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                ];
+                const columnDefs: ColDef[] = [
+                    {
+                        headerName: "Already present data selector",
+                        field: "autocomplete-column",
+                        // @ts-ignore
+                        cellEditor: AutocompleteSelectCellEditor,
+                        cellEditorParams: {
+                            selectData: this.selectDatas,
+                            placeholder: 'Select an option',
+                        },
+                        valueFormatter: (params) => {
+                            if (params.value) {
+                                return params.value.label || params.value.value || params.value;
+                            }
+                            return "";
+                        },
+                        editable: true,
+                    }
+                ];
+                const gridOptions = {
+                    columnDefs: columnDefs,
+                    rowData: rowDatas,
+                    suppressScrollOnNewData: false,
+                };
+                new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
+            });
+        // ag-grid should be created on the DOM
+        cy.get('.ag-root').should('exist');
+        cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('not.exist');
+        // Start the edition
+        cy.get('.ag-row-first > .ag-cell ').type('{enter}').type('Ke');
+        cy.get('.autocomplete.ag-cell-editor-autocomplete').should('exist');
+        // Should select the first element and hit enter it to select
+        cy.get('.ag-row-first > .ag-cell ').type('{downArrow}').type('{enter}');
+        cy.get('.ag-row-first > .ag-cell ').type('{enter}');
+        cy.get('.ag-cell > .ag-wrapper > .ag-input-field-input').invoke('val').then(($text) => {
+            expect($text).to.equal('Kenya Gallagher')
+        })
+    });
+    it('should autofill input value with previous text if strict is false', function () {
+        cy.fixture('selectDatas/names.json').as('selectDatas');
+        // @ts-ignore
+        cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html');
+        cy.get('#myGrid')
+            .then((jQueryElement) => {
+                const rowDatas = [
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                ];
+                const columnDefs: ColDef[] = [
+                    {
+                        headerName: "Already present data selector",
+                        field: "autocomplete-column",
+                        // @ts-ignore
+                        cellEditor: AutocompleteSelectCellEditor,
+                        cellEditorParams: {
+                            selectData: this.selectDatas,
+                            placeholder: 'Select an option',
+                            autocomplete: {
+                                strict: false,
+                            }
+                        },
+                        valueFormatter: (params) => {
+                            if (params.value) {
+                                return params.value.label || params.value.value || params.value;
+                            }
+                            return "";
+                        },
+                        editable: true,
+                    }
+                ];
+                const gridOptions = {
+                    columnDefs: columnDefs,
+                    rowData: rowDatas,
+                    suppressScrollOnNewData: false,
+                };
+                new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
+            });
+        // ag-grid should be created on the DOM
+        cy.get('.ag-root').should('exist');
+        cy.get('.ag-row-first > .ag-cell ').contains('Kenya Gallagher').should('not.exist');
+        // Start the edition
+        cy.get('.ag-row-first > .ag-cell ').type('{enter}').type('somevalue');
+        cy.get('.ag-row-first > .ag-cell ').type('{enter}');
+        cy.get('.ag-row-first > .ag-cell ').type('{enter}');
+        cy.get('.ag-cell > .ag-wrapper > .ag-input-field-input').invoke('val').then(($text) => {
+            expect($text).to.equal('somevalue')
+        })
+    });
 });

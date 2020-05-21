@@ -71,6 +71,7 @@ describe('autocomplete end-to-end autoselect tests', () => {
         cy.get('.autocomplete');
         // Should close the list with escape key
         cy.get('#autocompleter')
+            .type('{del}')
             .type('{esc}');
         cy.get('.autocomplete').should('not.exist');
         cy.get('#autocompleter').then(jQueryElement => {
@@ -110,7 +111,6 @@ describe('autocomplete end-to-end autoselect tests', () => {
         cy.get('.autocomplete > :nth-child(1)').then((jQueryElement) => {
             expect(jQueryElement.hasClass('selected')).to.be.equal(true);
         });
-        // Should close the list with escape key
         cy.get('#autocompleter')
             .type('{enter}');
         cy.get('.autocomplete').should('not.exist');

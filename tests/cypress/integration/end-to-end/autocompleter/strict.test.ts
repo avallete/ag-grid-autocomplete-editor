@@ -113,7 +113,7 @@ describe('autocomplete end-to-end strict tests', () => {
             expect(jQueryElement.val()).to.be.equal('United');
         });
     });
-    it('should call onFreeTextSelect when strict is true', function () {
+    it('should call onFreeTextSelect when strict is false', function () {
         const inputText = 'United';
         let autocompleteSettings: Partial<AutocompleteSettings<AutocompleteItem>> = {
             autoselectfirst: false,
