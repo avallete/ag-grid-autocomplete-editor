@@ -465,6 +465,62 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
         // Should have two elements matching Ke coming from the data
         cy.get('.autocomplete.ag-cell-editor-autocomplete').find('div').should('have.length', 2)
     });
+    it('should show selection list with regexIsh data', function () {
+        cy.fixture('selectDatas/regexish.json').as('selectDatas');
+        // @ts-ignore
+        cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html');
+        cy.get('#myGrid')
+            .then((jQueryElement) => {
+                const rowDatas = [
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                    {'autocomplete-column': null},
+                ];
+                const columnDefs: ColDef[] = [
+                    {
+                        headerName: "Already present data selector",
+                        field: "autocomplete-column",
+                        // @ts-ignore
+                        cellEditor: AutocompleteSelectCellEditor,
+                        cellEditorParams: {
+                            selectData: this.selectDatas,
+                            placeholder: 'Select an option',
+                            minLength: 0,
+                        },
+                        valueFormatter: (params) => {
+                            if (params.value) {
+                                return params.value.label || params.value.value || params.value;
+                            }
+                            return "";
+                        },
+                        editable: true,
+                    }
+                ];
+                const gridOptions = {
+                    columnDefs: columnDefs,
+                    rowData: rowDatas,
+                    suppressScrollOnNewData: false,
+                };
+                new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
+            });
+        // ag-grid should be created on the DOM
+        cy.get('.ag-root').should('exist');
+        // Start the edition
+        cy.get('.ag-row-first > .ag-cell ').click().type('{enter}').type('(');
+        // Should have created the autocomplete selection box
+        cy.get('.autocomplete.ag-cell-editor-autocomplete').should('exist');
+        // Should have two elements matching Ke coming from the data
+        cy.get('.autocomplete.ag-cell-editor-autocomplete').find('div').should('have.length', 4)
+        cy.get('.autocomplete > *').should(($elems) => {
+            expect($elems).to.have.length(4);
+            expect($elems.eq(0).html()).to.equal('<span><strong>(</strong></span>');
+            expect($elems.eq(1).html()).to.equal('<span><strong>(</strong>)$^</span>');
+            expect($elems.eq(2).html()).to.equal('<span>^$<strong>(</strong>)</span>');
+            expect($elems.eq(3).html()).to.equal('<span><strong>(</strong>.*^)$</span>');
+        })
+    });
     it('should select autocomplete the data and put it into ag-grid when clicked 1st', function () {
         cy.fixture('selectDatas/names.json').as('selectDatas');
         // @ts-ignore

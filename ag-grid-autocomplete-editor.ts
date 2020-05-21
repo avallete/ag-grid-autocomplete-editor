@@ -98,7 +98,8 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
             showOnFocus: false,
             render: function (cellEditor: AutocompleteSelectCellEditor, item: AutocompleteClient, value) {
                 let itemElement = document.createElement("div");
-                let regex = new RegExp(value, 'gi');
+                let escapedValue = (value ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                let regex = new RegExp(escapedValue, 'gi');
                 let fieldItem = document.createElement('span');
                 fieldItem.innerHTML = item.label.replace(regex, function (match: string) {
                     return "<strong>" + match + "</strong>"
