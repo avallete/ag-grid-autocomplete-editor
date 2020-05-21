@@ -64,7 +64,7 @@
     "autoprefixer": "9.7.6",
     "css-loader": "^3.5.2",
     "mini-css-extract-plugin": "^0.9.0",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
     "postcss-scss": "^2.0.0",
     "sass-loader": "^8.0.2",
@@ -73,7 +73,7 @@
     "typescript": "3.8.3",
     "webpack": "4.42.1",
     "webpack-cli": "3.3.11",
-    "webpack-dev-server": "3.10.3"
+    "webpack-dev-server": "^3.11.0"
   },
   "types": "./ag-grid-autocomplete-editor.d.ts"
 }
