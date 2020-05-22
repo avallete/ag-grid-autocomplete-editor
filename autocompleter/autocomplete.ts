@@ -358,21 +358,16 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
     function keydownEventHandler(ev: KeyboardEvent): void {
         const keyCode = ev.which || ev.keyCode || 0;
 
-        if (keyCode === Keys.Up || keyCode === Keys.Down || keyCode === Keys.Esc) {
+        if (keyCode === Keys.Up || keyCode === Keys.Down) {
             const containerIsDisplayed = containerDisplayed();
 
-            if (keyCode === Keys.Esc) {
-                settings.onSelect(undefined, input, ev);
-                clear();
-            } else {
-                if (!containerDisplayed || items.length < 1) {
-                    return;
-                }
-                keyCode === Keys.Up
-                    ? selectPrev()
-                    : selectNext();
-                update();
+            if (!containerDisplayed || items.length < 1) {
+                return;
             }
+            keyCode === Keys.Up
+                ? selectPrev()
+                : selectNext();
+            update();
 
             ev.preventDefault();
             if (containerIsDisplayed) {
@@ -381,7 +376,6 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
 
             return;
         }
-
         if (keyCode === Keys.Enter || keyCode === Keys.Tab) {
             if (strict) {
                 settings.onSelect(selected, input, ev);
@@ -399,6 +393,10 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
                 }
                 clear();
             }
+        }
+        if (keyCode === Keys.Esc) {
+            settings.onSelect(undefined, input, ev);
+            clear();
         }
     }
 
