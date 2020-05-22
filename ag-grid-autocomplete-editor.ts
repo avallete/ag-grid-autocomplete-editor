@@ -6,7 +6,7 @@ import {
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
-    SuppressKeyboardEventParams
+    SuppressKeyboardEventParams,
 } from '@ag-grid-community/core';
 
 import './ag-grid-autocomplete-editor.scss';
@@ -14,7 +14,7 @@ import './ag-grid-autocomplete-editor.scss';
 import autocomplete, {AutocompleteItem, EventTrigger} from './autocompleter/autocomplete';
 
 export interface DataFormat extends AutocompleteItem {
-    value: number | string;
+    value: any;
     label: string;
     group?: string;
 }
@@ -65,16 +65,16 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     private readonly eInput: HTMLInputElement;
     private autocompleter?: any;
     private required: boolean = false;
+    private strict: boolean = true;
     private stopEditing?: (cancel?: boolean) => void;
+    private params?: IAutocompleteSelectCellEditorParams;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper?: GridOptionsWrapper;
 
     constructor() {
         super('<div class="ag-wrapper ag-input-wrapper ag-text-field-input-wrapper ag-cell-editor-autocomplete-wrapper" style="padding: 0 !important;"><input class="ag-input-field-input ag-text-field-input ag-cell-editor-autocomplete-input" type="text"/></div>');
         this.eInput = this.getGui().querySelector('input') as HTMLInputElement;
-        if (this.currentItem) {
-            this.eInput.value = this.currentItem.label || this.currentItem.value as string;
-        }
+        this.eInput.value = this.getValue()?.label || '';
     }
 
     private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
@@ -93,6 +93,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
 
     public init(params: IAutocompleteSelectCellEditorParams) {
+        this.params = params;
         this.stopEditing = params.stopEditing;
         const defaultSettings: IDefaultAutocompleterSettings<AutocompleteClient> = {
             showOnFocus: false,
@@ -149,7 +150,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         this.eInput.value = AutocompleteSelectCellEditor.getStartValue(params);
 
         const autocompleteParams = {...defaultSettings, ...params.autocomplete};
-
+        this.strict = autocompleteParams.strict;
         this.autocompleter = autocomplete({
             input: this.eInput,
             render: (item: AutocompleteClient, currentValue: string) => {
@@ -266,12 +267,15 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
 
     getValue(): DataFormat | undefined {
-        return this.currentItem;
+        if (this.strict) {
+            return this.currentItem;
+        }
+        return this.currentItem || {value: null, label: this.eInput.value};
     }
 
     isCancelAfterEnd(): boolean {
         if (this.required) {
-            return !this.currentItem;
+            return !this.getValue();
         }
         return false;
     }

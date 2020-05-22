@@ -2,7 +2,7 @@ import { IAfterGuiAttachedParams, ICellEditorComp, ICellEditorParams, PopupCompo
 import './ag-grid-autocomplete-editor.scss';
 import { AutocompleteItem, EventTrigger } from './autocompleter/autocomplete';
 export interface DataFormat extends AutocompleteItem {
-    value: number | string;
+    value: any;
     label: string;
     group?: string;
 }
@@ -33,7 +33,9 @@ export declare class AutocompleteSelectCellEditor extends PopupComponent impleme
     private readonly eInput;
     private autocompleter?;
     private required;
+    private strict;
     private stopEditing?;
+    private params?;
     private gridOptionsWrapper?;
     constructor();
     private static suppressKeyboardEvent;
