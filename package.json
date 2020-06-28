@@ -1,26 +1,24 @@
 {
   "name": "ag-grid-autocomplete-editor",
-  "version": "2.0.0",
+  "version": "0.0.0-development",
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
   "main": "ag-grid-autocomplete-editor.js",
   "files": [
-    "/autocompleter",
     "/ag-grid-autocomplete-editor.d.ts",
-    "/ag-grid-autocomplete-editor.ts",
     "/ag-grid-autocomplete-editor.js",
     "/ag-grid-autocomplete-editor.js.map",
-    "/ag-grid-autocomplete-editor.scss",
     "/main.css",
     "/main.css.map"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/avallete/ag-grid-autocomplete-editor.git"
+    "url": "https://github.com/avallete/ag-grid-autocomplete-editor.git"
   },
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
-    "build": "webpack --config config/webpack.prod.js --progress --profile --bail --allow-js"
+    "build": "webpack --config config/webpack.prod.js --progress --profile --bail --allow-js",
+    "semantic-release": "semantic-release"
   },
   "author": "Andrew Valleteau",
   "license": "MIT",
@@ -68,6 +66,7 @@
     "postcss-loader": "^3.0.0",
     "postcss-scss": "^2.1.1",
     "sass-loader": "^8.0.2",
+    "semantic-release": "^17.1.1",
     "style-loader": "^1.2.1",
     "ts-loader": "7.0.5",
     "typescript": "3.9.5",
