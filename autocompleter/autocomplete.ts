@@ -219,7 +219,7 @@ export default function autocomplete<T extends AutocompleteItem>(this: any, sett
             }
             const div = render(item, inputValue);
             if (div) {
-                div.addEventListener("click", function (ev: MouseEvent): void {
+                div.addEventListener("pointerdown", function (ev: MouseEvent): void {
                     settings.onSelect(item, input, ev);
                     clear();
                     ev.preventDefault();
