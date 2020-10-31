@@ -56,7 +56,7 @@
     "select"
   ],
   "dependencies": {
-    "@ag-grid-community/core": "~23.2.1"
+    "@ag-grid-community/core": ">= 23.2.1"
   },
   "devDependencies": {
     "@types/node": "^14.0.14",

@@ -1,6 +1,5 @@
 import {
     Autowired,
-    Constants,
     GridOptionsWrapper,
     IAfterGuiAttachedParams,
     ICellEditorComp,
@@ -12,6 +11,13 @@ import {
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
 import autocomplete, {AutocompleteItem, EventTrigger} from './autocompleter/autocomplete';
+
+const KEY_BACKSPACE = 8;
+const KEY_DELETE = 46;
+const KEY_ENTER = 13;
+const KEY_TAB = 9;
+const KEY_UP = 38;
+const KEY_DOWN = 40;
 
 export interface DataFormat extends AutocompleteItem {
     value: number | string;
@@ -79,11 +85,11 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
 
     private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
         let keyCode = params.event.keyCode;
-        return params.editing && (keyCode === Constants.KEY_UP || keyCode === Constants.KEY_DOWN || keyCode === Constants.KEY_ENTER || keyCode === Constants.KEY_TAB);
+        return params.editing && (keyCode === KEY_UP || keyCode === KEY_DOWN || keyCode === KEY_ENTER || keyCode === KEY_TAB);
     }
 
     private static getStartValue(params: IAutocompleteSelectCellEditorParams) {
-        const keyPressBackspaceOrDelete = params.keyPress === Constants.KEY_BACKSPACE || params.keyPress === Constants.KEY_DELETE;
+        const keyPressBackspaceOrDelete = params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE;
         if (keyPressBackspaceOrDelete) {
             return '';
         } else if (params.charPress) {
@@ -219,7 +225,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
 
     handleTabEvent(event: KeyboardEvent) {
         const keyCode = event.which || event.keyCode || 0;
-        if (keyCode === Constants.KEY_TAB && this.gridOptionsWrapper) {
+        if (keyCode === KEY_TAB && this.gridOptionsWrapper) {
             if (event.shiftKey) {
                 this.gridOptionsWrapper.getApi()!.tabToPreviousCell();
             } else {
