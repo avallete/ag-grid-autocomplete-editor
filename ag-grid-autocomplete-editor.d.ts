@@ -34,7 +34,6 @@ export declare class AutocompleteSelectCellEditor extends PopupComponent impleme
     private autocompleter?;
     private required;
     private stopEditing?;
-    private gridOptionsWrapper?;
     constructor();
     private static suppressKeyboardEvent;
     private static getStartValue;

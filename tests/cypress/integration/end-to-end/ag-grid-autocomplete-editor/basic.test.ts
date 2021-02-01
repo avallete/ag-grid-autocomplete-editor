@@ -39,6 +39,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -85,6 +86,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -132,6 +134,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -180,6 +183,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -232,6 +236,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -279,6 +284,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -395,6 +401,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -453,6 +460,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -502,6 +510,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -557,6 +566,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -608,6 +618,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -659,6 +670,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -711,6 +723,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
@@ -763,6 +776,7 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
                     columnDefs: columnDefs,
                     rowData: rowDatas,
                     suppressScrollOnNewData: false,
+                    suppressBrowserResizeObserver: true,
                 };
                 new Grid(<HTMLElement>jQueryElement.get(0), gridOptions)
             });
