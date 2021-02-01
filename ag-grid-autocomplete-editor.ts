@@ -1,6 +1,4 @@
 import {
-    Autowired,
-    GridOptionsWrapper,
     IAfterGuiAttachedParams,
     ICellEditorComp,
     ICellEditorParams,
@@ -11,6 +9,7 @@ import {
 import './ag-grid-autocomplete-editor.scss';
 // This import must be done with require because of TypeScript transpiler problems with export default
 import autocomplete, {AutocompleteItem, EventTrigger} from './autocompleter/autocomplete';
+
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
@@ -72,8 +71,6 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     private autocompleter?: any;
     private required: boolean = false;
     private stopEditing?: (cancel?: boolean) => void;
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper?: GridOptionsWrapper;
 
     constructor() {
         super('<div class="ag-wrapper ag-input-wrapper ag-text-field-input-wrapper ag-cell-editor-autocomplete-wrapper" style="padding: 0 !important;"><input class="ag-input-field-input ag-text-field-input ag-cell-editor-autocomplete-input" type="text"/></div>');
