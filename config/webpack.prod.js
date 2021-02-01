@@ -1,12 +1,10 @@
-var webpack = require('webpack');
 var path = require('path');
 
 var autoprefixer = require('autoprefixer');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const devMode = false;
 
 module.exports = {
-    mode: "production",
+    mode: 'production',
     devtool: 'source-map',
 
     entry: './ag-grid-autocomplete-editor.ts',
@@ -45,7 +43,7 @@ module.exports = {
                     {loader: 'sass-loader', options: {sourceMap: true}},
                     {
                         loader: 'postcss-loader',
-                        options: {sourceMap: true, syntax: 'postcss-scss', plugins: [autoprefixer()]}
+                        options: {sourceMap: true, postcssOptions: {plugins: [autoprefixer()], syntax: 'postcss-scss'}}
                     },
                 ],
             },

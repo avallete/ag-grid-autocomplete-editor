@@ -2,7 +2,7 @@
  * Used to setup TypeScript support in cypress
  */
 const autoprefixer = require('autoprefixer');
-const wp = require('@cypress/webpack-preprocessor');
+const wp = require('cypress-webpack-preprocessor-v5');
 
 module.exports = (on) => {
     const options = {
@@ -24,7 +24,7 @@ module.exports = (on) => {
                             {loader: 'sass-loader', options: {sourceMap: true}},
                             {
                                 loader: 'postcss-loader',
-                                options: {sourceMap: true, syntax: 'postcss-scss', plugins: [autoprefixer()]}
+                                options: {sourceMap: true, postcssOptions: {plugins: [autoprefixer()], syntax: 'postcss-scss'}}
                             },
                         ],
                     },
