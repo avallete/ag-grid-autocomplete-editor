@@ -55,8 +55,8 @@
     "ag-grid-autocomplete-editor",
     "select"
   ],
-  "dependencies": {
-    "@ag-grid-community/core": "^25.0.1"
+  "peerDependencies": {
+    "ag-grid-community": "^25.0.1"
   },
   "devDependencies": {
     "@types/node": "^14.14.22",
