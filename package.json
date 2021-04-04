@@ -19,6 +19,7 @@
   "scripts": {
     "start": "webpack serve --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail",
+    "test": "npm run build && cd tests && npm install -D && npm run test",
     "lint": "prettier --write . && eslint .",
     "semantic-release": "semantic-release"
   },
