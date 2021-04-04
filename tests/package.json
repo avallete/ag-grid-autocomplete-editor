@@ -7,8 +7,8 @@
     "test": "cypress run"
   },
   "dependencies": {
-    "ag-grid-autocomplete-editor": "file:../",
-    "ag-grid-community": "^25.1.0",
+    "ag-grid-autocomplete-editor": "file:..",
+    "ag-grid-community": "25.0.1",
     "cypress": "6.8.0"
   },
   "devDependencies": {

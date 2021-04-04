@@ -26,8 +26,8 @@ const TS_OVERRIDE = {
 }
 
 module.exports = {
-  "parserOptions": {
-    "ecmaVersion": 6
+  parserOptions: {
+    ecmaVersion: 6,
   },
   overrides: [TS_OVERRIDE],
 }
