@@ -75,14 +75,12 @@ export default function autocomplete<T extends AutocompleteItem>(
   const container: HTMLDivElement = doc.createElement('div')
   const containerStyle = container.style
   const userAgent = navigator.userAgent
-  const mobileFirefox = userAgent.indexOf('Firefox') !== -1 && userAgent.indexOf('Mobile') !== -1
   const debounceWaitMs = settings.debounceWaitMs || 0
   const strict = settings.strict
   const autoselectfirst = settings.autoselectfirst
   const onFreeTextSelect = settings.onFreeTextSelect
 
-  // 'keyup' event will not be fired on Mobile Firefox, so we have to use 'input' event instead
-  const keyUpEventName = mobileFirefox ? 'input' : 'keyup'
+  const keyUpEventName = 'input'
 
   let items: T[] = []
   let inputValue = ''
