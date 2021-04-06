@@ -86,19 +86,24 @@ export interface IAutocompleterSettings<T extends AutocompleteItem> {
   ) => void
 }
 
-export interface IAutocompleteSelectCellEditorParams extends ICellEditorParams {
+export interface IAutocompleteSelectCellEditorParameters extends ICellEditorParams {
   autocomplete?: IAutocompleterSettings<AutocompleteClient>
-  selectData: Array<DataFormat> | ((params: IAutocompleteSelectCellEditorParams) => Array<DataFormat>)
+  selectData: Array<DataFormat> | ((parameters: IAutocompleteSelectCellEditorParameters) => Array<DataFormat>)
   placeholder?: string
   required?: boolean
 }
 
 export class AutocompleteSelectCellEditor extends PopupComponent implements ICellEditorComp {
   public currentItem?: DataFormat
+
   private focusAfterAttached: boolean = false
+
   private readonly eInput: HTMLInputElement
+
   private autocompleter?: any
+
   private required: boolean = false
+
   private stopEditing?: (cancel?: boolean) => void
 
   constructor() {
@@ -111,44 +116,45 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
   }
 
-  private static suppressKeyboardEvent(params: SuppressKeyboardEventParams): boolean {
-    let keyCode = params.event.keyCode
+  private static suppressKeyboardEvent(parameters: SuppressKeyboardEventParams): boolean {
+    const { keyCode } = parameters.event
     return (
-      params.editing && (keyCode === KEY_UP || keyCode === KEY_DOWN || keyCode === KEY_ENTER || keyCode === KEY_TAB)
+      parameters.editing && (keyCode === KEY_UP || keyCode === KEY_DOWN || keyCode === KEY_ENTER || keyCode === KEY_TAB)
     )
   }
 
-  private static getStartValue(params: IAutocompleteSelectCellEditorParams) {
-    const keyPressBackspaceOrDelete = params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE
+  private static getStartValue(parameters: IAutocompleteSelectCellEditorParameters) {
+    const keyPressBackspaceOrDelete = parameters.keyPress === KEY_BACKSPACE || parameters.keyPress === KEY_DELETE
     if (keyPressBackspaceOrDelete) {
       return ''
-    } else if (params.charPress) {
-      return params.charPress
     }
-    return params.formatValue(params.value)
+    if (parameters.charPress) {
+      return parameters.charPress
+    }
+    return parameters.formatValue(parameters.value)
   }
 
-  public init(params: IAutocompleteSelectCellEditorParams) {
-    this.stopEditing = params.stopEditing
+  public init(parameters: IAutocompleteSelectCellEditorParameters) {
+    this.stopEditing = parameters.stopEditing
     const defaultSettings: IDefaultAutocompleterSettings<AutocompleteClient> = {
       showOnFocus: false,
-      render: function (cellEditor: AutocompleteSelectCellEditor, item: AutocompleteClient, value) {
-        let itemElement = document.createElement('div')
-        let escapedValue = (value ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        let regex = new RegExp(escapedValue, 'gi')
-        let fieldItem = document.createElement('span')
-        fieldItem.innerHTML = item.label.replace(regex, function (match: string) {
-          return '<strong>' + match + '</strong>'
+      render(cellEditor: AutocompleteSelectCellEditor, item: AutocompleteClient, value) {
+        const itemElement = document.createElement('div')
+        const escapedValue = (value ?? '').replace(/[$()*+.?[\\\]^{|}]/g, '\\$&')
+        const regex = new RegExp(escapedValue, 'gi')
+        const fieldItem = document.createElement('span')
+        fieldItem.innerHTML = item.label.replace(regex, function strongify(match: string) {
+          return `<strong>${match}</strong>`
         })
-        itemElement.appendChild(fieldItem)
+        itemElement.append(fieldItem)
         cellEditor.addManagedListener(itemElement, 'mousedown', (event: MouseEvent) => {
           cellEditor.currentItem = item
           event.stopPropagation()
         })
         return itemElement
       },
-      renderGroup: function (cellEditor, name) {
-        let div = document.createElement('div')
+      renderGroup(cellEditor, name) {
+        const div = document.createElement('div')
         div.textContent = name
         div.className = 'group'
         return div
@@ -158,65 +164,69 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
       emptyMsg: 'None',
       strict: true,
       autoselectfirst: true,
-      onFreeTextSelect: function () {},
-      onSelect: function (cellEditor, item: AutocompleteClient | undefined) {
+      onFreeTextSelect() {},
+      onSelect(cellEditor, item: AutocompleteClient | undefined) {
+        // eslint-disable-next-line no-param-reassign
         cellEditor.currentItem = item
       },
       fetch: (cellEditor, text, callback) => {
-        let items = this.getSelectData(params)
-        let match = text.toLowerCase() || cellEditor.eInput.value.toLowerCase()
+        const items = this.getSelectData(parameters)
+        const match = text.toLowerCase() || cellEditor.eInput.value.toLowerCase()
         callback(
           items.filter(function (n) {
-            return n.label.toLowerCase().indexOf(match) !== -1
+            return n.label.toLowerCase().includes(match)
           })
         )
       },
       debounceWaitMs: 200,
-      customize: function (cellEditor, input, inputRect, container, maxHeight) {
+      customize(cellEditor, input, inputRect, container, maxHeight) {
         if (maxHeight < 100) {
+          /* eslint-disable no-param-reassign */
           container.style.top = '10px'
-          container.style.bottom = window.innerHeight - inputRect.bottom + input.offsetHeight + 'px'
+          container.style.bottom = `${window.innerHeight - inputRect.bottom + input.offsetHeight}px`
           container.style.maxHeight = '140px'
+          /* eslint-enable no-param-reassign */
         }
       },
     }
-    this.focusAfterAttached = params.cellStartedEdit
+    this.focusAfterAttached = parameters.cellStartedEdit
 
-    this.eInput.placeholder = params.placeholder || ''
-    this.eInput.value = AutocompleteSelectCellEditor.getStartValue(params)
+    this.eInput.placeholder = parameters.placeholder || ''
+    this.eInput.value = AutocompleteSelectCellEditor.getStartValue(parameters)
 
-    const autocompleteParams = { ...defaultSettings, ...params.autocomplete }
+    const autocompleteParameters = { ...defaultSettings, ...parameters.autocomplete }
 
     this.autocompleter = autocomplete({
       input: this.eInput,
       render: (item: AutocompleteClient, currentValue: string) => {
-        if (autocompleteParams.render) {
-          return autocompleteParams.render(this, item, currentValue)
+        if (autocompleteParameters.render) {
+          return autocompleteParameters.render(this, item, currentValue)
         }
         return defaultSettings.render(this, item, currentValue)
       },
       renderGroup: (name: string, currentValue: string) => {
-        if (autocompleteParams.renderGroup) {
-          return autocompleteParams.renderGroup(this, name, currentValue)
+        if (autocompleteParameters.renderGroup) {
+          return autocompleteParameters.renderGroup(this, name, currentValue)
         }
         return defaultSettings.renderGroup(this, name, currentValue)
       },
-      className: autocompleteParams.className || defaultSettings.className,
-      minLength: autocompleteParams.minLength !== undefined ? autocompleteParams.minLength : defaultSettings.minLength,
-      emptyMsg: autocompleteParams.emptyMsg || defaultSettings.emptyMsg,
-      strict: autocompleteParams.strict,
-      autoselectfirst: autocompleteParams.autoselectfirst,
-      showOnFocus: autocompleteParams.showOnFocus,
+      className: autocompleteParameters.className || defaultSettings.className,
+      minLength:
+        autocompleteParameters.minLength !== undefined ? autocompleteParameters.minLength : defaultSettings.minLength,
+      emptyMsg: autocompleteParameters.emptyMsg || defaultSettings.emptyMsg,
+      strict: autocompleteParameters.strict,
+      autoselectfirst: autocompleteParameters.autoselectfirst,
+      showOnFocus: autocompleteParameters.showOnFocus,
       onFreeTextSelect: (item: AutocompleteClient, input: HTMLInputElement) => {
-        if (autocompleteParams.onFreeTextSelect) {
-          return autocompleteParams.onFreeTextSelect(this, item, input)
+        if (autocompleteParameters.onFreeTextSelect) {
+          return autocompleteParameters.onFreeTextSelect(this, item, input)
         }
         return defaultSettings.onFreeTextSelect(this, item, input)
       },
       onSelect: (item: AutocompleteClient | undefined, input: HTMLInputElement, event: KeyboardEvent | MouseEvent) => {
         let result: any
-        if (autocompleteParams.onSelect) {
-          result = autocompleteParams.onSelect(this, item, input)
+        if (autocompleteParameters.onSelect) {
+          result = autocompleteParameters.onSelect(this, item, input)
           if (event instanceof KeyboardEvent) {
             this.handleTabEvent(event)
           } else {
@@ -233,29 +243,30 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         return result
       },
       fetch: (text: string, update: (items: AutocompleteClient[] | false) => void, trigger: EventTrigger) => {
-        if (autocompleteParams.fetch) {
-          return autocompleteParams.fetch(this, text, update, trigger)
+        if (autocompleteParameters.fetch) {
+          return autocompleteParameters.fetch(this, text, update, trigger)
         }
         return defaultSettings.fetch(this, text, update, trigger)
       },
-      debounceWaitMs: autocompleteParams.debounceWaitMs || defaultSettings.debounceWaitMs,
+      debounceWaitMs: autocompleteParameters.debounceWaitMs || defaultSettings.debounceWaitMs,
       customize: (
         input: HTMLInputElement,
         inputRect: ClientRect | DOMRect,
         container: HTMLDivElement,
         maxHeight: number
       ) => {
-        if (autocompleteParams.customize) {
-          return autocompleteParams.customize(this, input, inputRect, container, maxHeight)
+        if (autocompleteParameters.customize) {
+          return autocompleteParameters.customize(this, input, inputRect, container, maxHeight)
         }
         return defaultSettings.customize(this, input, inputRect, container, maxHeight)
       },
     })
-    if (params.required) {
+    if (parameters.required) {
       this.required = true
     }
-    if (!params.colDef.suppressKeyboardEvent) {
-      params.colDef.suppressKeyboardEvent = AutocompleteSelectCellEditor.suppressKeyboardEvent
+    if (!parameters.colDef.suppressKeyboardEvent) {
+      // eslint-disable-next-line no-param-reassign
+      parameters.colDef.suppressKeyboardEvent = AutocompleteSelectCellEditor.suppressKeyboardEvent
     }
   }
 
@@ -272,12 +283,12 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
   }
 
-  afterGuiAttached(params?: IAfterGuiAttachedParams): void {
+  afterGuiAttached(parameters?: IAfterGuiAttachedParams): void {
     if (!this.focusAfterAttached) {
       return
     }
 
-    const eInput = this.eInput
+    const { eInput } = this
     eInput.focus()
     eInput.select()
     // when we started editing, we want the caret at the end, not the start.
@@ -318,21 +329,24 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     return false
   }
 
+  // eslint-disable-next-line class-methods-use-this
   isCancelBeforeStart(): boolean {
     return false
   }
 
+  // eslint-disable-next-line class-methods-use-this
   isPopup(): boolean {
     return false
   }
 
-  getSelectData(params: IAutocompleteSelectCellEditorParams): Array<DataFormat> {
-    if (typeof params.selectData === 'function') {
-      return params.selectData(params)
+  // eslint-disable-next-line class-methods-use-this
+  getSelectData(parameters: IAutocompleteSelectCellEditorParameters): Array<DataFormat> {
+    if (typeof parameters.selectData === 'function') {
+      return parameters.selectData(parameters)
     }
 
-    if (Array.isArray(params.selectData)) {
-      return params.selectData as Array<DataFormat>
+    if (Array.isArray(parameters.selectData)) {
+      return parameters.selectData as Array<DataFormat>
     }
 
     return []
