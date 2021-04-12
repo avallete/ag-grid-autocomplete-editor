@@ -1,10 +1,4 @@
-import {
-  IAfterGuiAttachedParams,
-  ICellEditorComp,
-  ICellEditorParams,
-  PopupComponent,
-  SuppressKeyboardEventParams,
-} from 'ag-grid-community'
+import { ICellEditorComp, ICellEditorParams, PopupComponent, SuppressKeyboardEventParams } from 'ag-grid-community'
 
 import './ag-grid-autocomplete-editor.scss'
 // This import must be done with require because of TypeScript transpiler problems with export default
@@ -26,12 +20,8 @@ export interface DataFormat extends AutocompleteItem {
 export type AutocompleteClient = DataFormat & AutocompleteItem
 
 interface IDefaultAutocompleterSettings<T extends AutocompleteItem> {
-  render: (cellEditor: AutocompleteSelectCellEditor, item: T, currentValue: string) => HTMLDivElement | undefined
-  renderGroup: (
-    cellEditor: AutocompleteSelectCellEditor,
-    name: string,
-    currentValue: string
-  ) => HTMLDivElement | undefined
+  render: (cellEditor: AutocompleteSelectCellEditor, item: T, currentValue: string) => HTMLDivElement
+  renderGroup: (cellEditor: AutocompleteSelectCellEditor, name: string, currentValue: string) => HTMLDivElement
   className: string
   minLength: number
   emptyMsg: string
@@ -57,12 +47,8 @@ interface IDefaultAutocompleterSettings<T extends AutocompleteItem> {
 }
 
 export interface IAutocompleterSettings<T extends AutocompleteItem> {
-  render?: (cellEditor: AutocompleteSelectCellEditor, item: T, currentValue: string) => HTMLDivElement | undefined
-  renderGroup?: (
-    cellEditor: AutocompleteSelectCellEditor,
-    name: string,
-    currentValue: string
-  ) => HTMLDivElement | undefined
+  render?: (cellEditor: AutocompleteSelectCellEditor, item: T, currentValue: string) => HTMLDivElement
+  renderGroup?: (cellEditor: AutocompleteSelectCellEditor, name: string, currentValue: string) => HTMLDivElement
   className?: string
   minLength?: number
   emptyMsg?: string
@@ -227,7 +213,8 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
         let result: any
         if (autocompleteParameters.onSelect) {
           result = autocompleteParameters.onSelect(this, item, input)
-          if (event instanceof KeyboardEvent) {
+          // need the second argument because of cypress testing changing the view context
+          if (event instanceof KeyboardEvent || event instanceof event.view!.document.defaultView!.KeyboardEvent) {
             this.handleTabEvent(event)
           } else {
             this.destroy()
@@ -235,7 +222,8 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
           return result
         }
         result = defaultSettings.onSelect(this, item, input)
-        if (event instanceof KeyboardEvent) {
+        // need the second argument because of cypress testing changing the view context
+        if (event instanceof KeyboardEvent || event instanceof event.view!.document.defaultView!.KeyboardEvent) {
           this.handleTabEvent(event)
         } else {
           this.destroy()
@@ -283,7 +271,7 @@ export class AutocompleteSelectCellEditor extends PopupComponent implements ICel
     }
   }
 
-  afterGuiAttached(parameters?: IAfterGuiAttachedParams): void {
+  afterGuiAttached(): void {
     if (!this.focusAfterAttached) {
       return
     }
