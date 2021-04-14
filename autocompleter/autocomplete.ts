@@ -1,42 +1,6 @@
-import { removeChildren, renderItems, defaultRenderGroup, defaultRender } from './rendering'
-import { AutocompleteItem, EventTrigger, RenderFunction, RenderGroupFunction } from './types'
+import { removeChildren, renderItems } from './rendering'
+import { AutocompleteItem, EventTrigger, AutocompleteSettings, AutocompleteResult } from './types'
 import singleton from './singleton'
-
-export interface AutocompleteSettings<T extends AutocompleteItem> {
-  input: HTMLInputElement
-  render?: RenderFunction<T>
-  renderGroup?: RenderGroupFunction
-  className?: string
-  minLength?: number
-  emptyMsg?: string
-  strict: boolean
-  autoselectfirst: boolean
-  onFreeTextSelect?: (item: T, input: HTMLInputElement) => void
-  onSelect: (item: T | undefined, input: HTMLInputElement, event: KeyboardEvent | MouseEvent) => void
-  /**
-   * Show autocomplete on focus event. Focus event will ignore the `minLength` property and will always call `fetch`.
-   */
-  showOnFocus?: boolean
-  fetch: (text: string, update: (items: T[] | false) => void, trigger: EventTrigger) => void
-  debounceWaitMs?: number
-  /**
-   * Callback for additional autocomplete customization
-   * @param {HTMLInputElement} input - input box associated with autocomplete
-   * @param {ClientRect | DOMRect} inputRect - size of the input box and its position relative to the viewport
-   * @param {HTMLDivElement} container - container with suggestions
-   * @param {number} maxHeight - max height that can be used by autocomplete
-   */
-  customize?: (
-    input: HTMLInputElement,
-    inputRect: ClientRect | DOMRect,
-    container: HTMLDivElement,
-    maxHeight: number
-  ) => void
-}
-
-export interface AutocompleteResult {
-  destroy: () => void
-}
 
 const enum Keys {
   Enter = 13,
@@ -55,11 +19,24 @@ const enum Keys {
 
 const KEYUP_EVENT_NAME = 'input'
 
+const KEYS_TO_IGNORE = new Set([
+  Keys.Up,
+  Keys.Enter,
+  Keys.Esc,
+  Keys.Right,
+  Keys.Left,
+  Keys.Shift,
+  Keys.Ctrl,
+  Keys.Alt,
+  Keys.CapsLock,
+  Keys.WindowsKey,
+  Keys.Tab,
+])
+
 export { AutocompleteItem, EventTrigger }
 /* eslint-disable unicorn/no-useless-undefined */
 
 export default function autocomplete<T extends AutocompleteItem>(
-  this: any,
   settings: AutocompleteSettings<T>
 ): AutocompleteResult {
   const [getDocument, setDocument] = singleton(settings.input.ownerDocument || window.document)
@@ -79,6 +56,8 @@ export default function autocomplete<T extends AutocompleteItem>(
     className,
     customize,
     emptyMsg,
+    render,
+    renderGroup,
   } = settings
   const debounceWaitMs = settings.debounceWaitMs || 0
   const minimumInputLength = minLength || 2
@@ -95,7 +74,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Detach the container from DOM
    */
-  function detach(): void {
+  function detach() {
     if (container) {
       container.remove()
     }
@@ -104,7 +83,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Clear debouncing timer if assigned
    */
-  function clearDebounceTimer(): void {
+  function clearDebounceTimer() {
     const debounceTimer = getDebounceTimer()
     if (debounceTimer !== undefined) {
       window.clearTimeout(debounceTimer)
@@ -116,7 +95,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Attach the container to DOM
    */
-  function attach(): void {
+  function attach() {
     setDocument(input.ownerDocument || window.document)
     if (!container.parentNode) {
       getDocument().body.append(container)
@@ -133,7 +112,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Clear autocomplete state and hide container
    */
-  function clear(): void {
+  function clear() {
     incrementKeypressCounter()
     setItems([])
     setInputValue('')
@@ -144,7 +123,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Update autocomplete position to put it under the input field
    */
-  function updatePosition(): void {
+  function updatePosition() {
     if (containerDisplayed()) {
       const document = getDocument()
 
@@ -173,7 +152,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Automatically move scroll bar if selected item is not visible
    */
-  function updateScroll(): void {
+  function updateScroll() {
     let element = container.querySelector('.selected') as HTMLDivElement
     if (element) {
       // make group visible
@@ -209,14 +188,12 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Redraw the autocomplete div element with suggestions
    */
-  function update(): void {
+  function update() {
     // Clear all child from container
     removeChildren(container)
 
     const items = getItems()
-    const render = settings.render || defaultRender
-    const renderGroup = settings.renderGroup || defaultRenderGroup
-    const fragment = renderItems<T>(items, getSelected(), getInputValue(), render, renderGroup, itemClickHandler)
+    const fragment = renderItems<T>(items, getSelected(), getInputValue(), itemClickHandler, render, renderGroup)
     container.append(fragment)
     if (items.length === 0 && strict) {
       // if no items display empty message
@@ -237,17 +214,17 @@ export default function autocomplete<T extends AutocompleteItem>(
     updateScroll()
   }
 
-  function updateIfDisplayed(): void {
+  function updateIfDisplayed() {
     if (containerDisplayed()) {
       update()
     }
   }
 
-  function resizeEventHandler(): void {
+  function resizeEventHandler() {
     updateIfDisplayed()
   }
 
-  function scrollEventHandler(event: Event): void {
+  function scrollEventHandler(event: Event) {
     if (event.target !== container) {
       updateIfDisplayed()
     } else {
@@ -289,23 +266,10 @@ export default function autocomplete<T extends AutocompleteItem>(
     }
   }
 
-  function keyupEventHandler(event: KeyboardEvent): void {
+  function keyupEventHandler(event: KeyboardEvent) {
     const keyCode = event.which || event.keyCode || 0
 
-    const ignore = [
-      Keys.Up,
-      Keys.Enter,
-      Keys.Esc,
-      Keys.Right,
-      Keys.Left,
-      Keys.Shift,
-      Keys.Ctrl,
-      Keys.Alt,
-      Keys.CapsLock,
-      Keys.WindowsKey,
-      Keys.Tab,
-    ]
-    if (ignore.includes(keyCode)) {
+    if (KEYS_TO_IGNORE.has(keyCode)) {
       return
     }
 
@@ -320,7 +284,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Select the previous item in suggestions
    */
-  function selectPreviousItem(): void {
+  function selectPreviousItem() {
     const items = getItems()
     const selected = getSelected()
     if (items.length === 0) {
@@ -342,7 +306,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * Select the next item in suggestions
    */
-  function selectNextItem(): void {
+  function selectNextItem() {
     const items = getItems()
     const selected = getSelected()
     if (items.length === 0) {
@@ -396,7 +360,7 @@ export default function autocomplete<T extends AutocompleteItem>(
     clear()
   }
 
-  function keydownEventHandler(event: KeyboardEvent): void {
+  function keydownEventHandler(event: KeyboardEvent) {
     const keyCode = event.which || event.keyCode || 0
 
     if (
@@ -426,13 +390,13 @@ export default function autocomplete<T extends AutocompleteItem>(
     }
   }
 
-  function focusEventHandler(): void {
+  function focusEventHandler() {
     if (showOnFocus) {
       startFetch(EventTrigger.Focus)
     }
   }
 
-  function focusOutEventHandler(event: Event): void {
+  function focusOutEventHandler(event: Event) {
     // we need to delay clear, because when we click on an item, blur will be called before click and remove items from DOM
     event.preventDefault()
     event.stopPropagation()
@@ -468,7 +432,7 @@ export default function autocomplete<T extends AutocompleteItem>(
   /**
    * This function will remove DOM elements and clear event handlers
    */
-  function destroy(): void {
+  function destroy() {
     removeEventListeners()
     clearDebounceTimer()
     clear()

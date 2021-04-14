@@ -21,6 +21,7 @@
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail",
     "test": "npm run build && cd tests && npm install -D && npm run test",
     "lint": "prettier --write . && eslint .",
+    "lint:fix": "prettier --write . && eslint --fix .",
     "semantic-release": "semantic-release"
   },
   "author": "Andrew Valleteau",
@@ -58,7 +59,7 @@
     "select"
   ],
   "peerDependencies": {
-    "ag-grid-community": "^25.0.1"
+    "@ag-grid-community/core": "^25.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "12.1.1",

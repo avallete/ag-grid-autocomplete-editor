@@ -5,18 +5,22 @@ var MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   mode: 'development',
-  devtool: 'cheap-module-source-map',
+  devtool: 'source-map',
 
   entry: './ag-grid-autocomplete-editor.ts',
 
-  output: {
-    path: path.resolve('dist'),
-    publicPath: 'http://localhost:8080/',
-    filename: 'bundle.js',
+  externals: {
+    '@ag-grid-community/core': '@ag-grid-community/core',
   },
 
+  output: {
+    path: path.resolve('./dist'),
+    publicPath: 'http://localhost:8080/',
+    filename: 'ag-grid-autocomplete-editor.js',
+    libraryTarget: 'umd',
+  },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts'],
   },
 
   module: {
@@ -27,13 +31,9 @@ module.exports = {
         options: { allowTsInNodeModules: true },
       },
       {
-        test: /\.html$/,
-        loader: 'html-loader',
-      },
-      {
         test: /\.(sa|sc|c)ss$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           { loader: 'css-loader', options: { sourceMap: true } },
           { loader: 'sass-loader', options: { sourceMap: true } },
           {
@@ -47,10 +47,7 @@ module.exports = {
 
   plugins: [
     new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
       filename: '[name].css',
-      chunkFilename: '[id].css',
     }),
   ],
 }
