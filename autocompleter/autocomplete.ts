@@ -33,7 +33,7 @@ const KEYS_TO_IGNORE = new Set([
   Keys.Tab,
 ])
 
-export { AutocompleteItem, EventTrigger }
+export { AutocompleteItem, EventTrigger, AutocompleteSettings }
 /* eslint-disable unicorn/no-useless-undefined */
 
 export default function autocomplete<T extends AutocompleteItem>(

@@ -9,29 +9,6 @@ export interface DataFormat extends AutocompleteItem {
 }
 
 export type AutocompleteClient = DataFormat & AutocompleteItem
-
-export interface IDefaultAutocompleterSettings<T extends AutocompleteItem, U extends PopupComponent> {
-  render: (cellEditor: U, item: T, currentValue: string) => HTMLElement
-  renderGroup: (cellEditor: U, name: string, currentValue: string) => HTMLElement
-  className: string
-  minLength: number
-  emptyMsg: string
-  strict: boolean
-  autoselectfirst: boolean
-  onFreeTextSelect: (cellEditor: U, item: T, input: HTMLInputElement) => void
-  onSelect: (cellEditor: U, item: T | undefined, input: HTMLInputElement) => void
-  fetch: (cellEditor: U, text: string, update: (items: T[] | false) => void, trigger?: EventTrigger) => void
-  debounceWaitMs: number
-  showOnFocus: boolean
-  customize: (
-    cellEditor: U,
-    input: HTMLInputElement,
-    inputRect: ClientRect | DOMRect,
-    container: HTMLDivElement,
-    maxHeight: number
-  ) => void
-}
-
 export interface IAutocompleterSettings<T extends AutocompleteItem, U extends PopupComponent> {
   render?: (cellEditor: U, item: T, currentValue: string) => HTMLElement
   renderGroup?: (cellEditor: U, name: string, currentValue: string) => HTMLElement
@@ -44,6 +21,7 @@ export interface IAutocompleterSettings<T extends AutocompleteItem, U extends Po
   onSelect?: (cellEditor: U, item: T | undefined, input: HTMLInputElement) => void
   fetch?: (cellEditor: U, text: string, update: (items: T[] | false) => void, trigger?: EventTrigger) => void
   debounceWaitMs?: number
+  showOnFocus?: boolean
   customize?: (
     cellEditor: U,
     input: HTMLInputElement,

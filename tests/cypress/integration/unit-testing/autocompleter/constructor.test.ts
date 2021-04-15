@@ -8,37 +8,37 @@ describe('autocomplete unit testing constructor', () => {
     expect(
       autocomplete({
         autoselectfirst: false,
-        fetch: function () {},
-        onSelect: function () {},
+        fetch() {},
+        onSelect() {},
         strict: false,
         input: window.document.body as HTMLInputElement,
       })
     ).to.be.an('object')
   })
   it('should return an object with wanted properties', () => {
-    let res = autocomplete({
+    const result = autocomplete({
       autoselectfirst: false,
-      fetch: function () {},
-      onSelect: function () {},
+      fetch() {},
+      onSelect() {},
       strict: false,
       input: window.document.body as HTMLInputElement,
     })
-    expect(res).to.be.an('object')
-    expect(res.destroy).to.be.a('function')
+    expect(result).to.be.an('object')
+    expect(result.destroy).to.be.a('function')
   })
   it('should properly mount on sandbox page', () => {
     cy.visit('./static/autocomplete-test-sandbox.html')
     // Get the input element
     cy.get('#autocompleter').then((currentSubject) => {
-      let res = autocomplete({
+      const result = autocomplete({
         autoselectfirst: false,
-        fetch: function () {},
-        onSelect: function () {},
+        fetch() {},
+        onSelect() {},
         strict: false,
         input: <HTMLInputElement>currentSubject.get(0),
       })
-      expect(res).to.be.an('object')
-      expect(res.destroy).to.be.a('function')
+      expect(result).to.be.an('object')
+      expect(result.destroy).to.be.a('function')
     })
   })
 })

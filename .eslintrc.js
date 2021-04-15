@@ -6,10 +6,17 @@ const tsExtends = [
 ]
 const CYPRESS_TS_OVERRIDE = {
   files: ['tests/cypress/**/*.ts'],
-  extends: [...tsExtends, 'plugin:cypress/recommended'],
+  parserOptions: {
+    project: './tsconfig.eslint.json',
+    tsconfigRootDir: __dirname,
+  },
+  extends: [...tsExtends, 'plugin:cypress/recommended', 'plugin:chai-friendly/recommended'],
   rules: {
     'radar/no-duplicate-string': 'off',
-    'no-unused-expressions': 'off',
+    'radar/no-identical-functions': 'off',
+    'no-new': 'off',
+    'func-names': 'off',
+    '@typescript-eslint/no-unused-expressions': 'off',
   },
 }
 

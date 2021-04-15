@@ -1,7 +1,6 @@
 import autocomplete, {
   AutocompleteItem,
   AutocompleteSettings,
-  EventTrigger,
 } from 'ag-grid-autocomplete-editor/autocompleter/autocomplete'
 
 describe('autocomplete end-to-end strict tests', () => {
@@ -12,46 +11,38 @@ describe('autocomplete end-to-end strict tests', () => {
     // @ts-ignore
     cy.visit('./static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
-    cy.get('#autocompleter').then((jQueryElement) => {
+    cy.get('#autocompleter').then((indexQueryElement) => {
       autocomplete({
         autoselectfirst: false,
-        fetch: function (
-          search: string,
-          update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void,
-          _: EventTrigger
-        ) {
+        fetch(search: string, update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void) {
           update([])
         },
-        onSelect: function (item: AutocompleteItem | undefined) {
+        onSelect(item: AutocompleteItem | undefined) {
           if (item && item.label) {
-            jQueryElement.val(item.label)
+            indexQueryElement.val(item.label)
           } else {
-            jQueryElement.val('undefined')
+            indexQueryElement.val('undefined')
           }
         },
         strict: true,
-        input: <HTMLInputElement>jQueryElement.get(0),
+        input: <HTMLInputElement>indexQueryElement.get(0),
       })
     })
     // Type some text into the input and select the first element using arrow keys
     cy.get('#autocompleter').type(inputText).type('{downarrow}').type('{enter}')
     // Should click on the first element on the list
-    cy.get('#autocompleter').then((jQueryElement) => {
-      expect(jQueryElement.val()).to.be.equal('undefined')
+    cy.get('#autocompleter').then((indexQueryElement) => {
+      expect(indexQueryElement.val()).to.be.equal('undefined')
     })
   })
   it('should not call onFreeTextSelect when strict is true', function () {
     const inputText = 'United'
-    let autocompleteSettings: Partial<AutocompleteSettings<AutocompleteItem>> = {
+    const autocompleteSettings: Partial<AutocompleteSettings<AutocompleteItem>> = {
       autoselectfirst: false,
-      fetch: function (
-        search: string,
-        update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void,
-        _: EventTrigger
-      ) {
+      fetch(search: string, update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void) {
         update([])
       },
-      onSelect: function () {},
+      onSelect() {},
       onFreeTextSelect: () => {},
       strict: true,
     }
@@ -61,8 +52,8 @@ describe('autocomplete end-to-end strict tests', () => {
     // @ts-ignore
     cy.visit('./static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
-    cy.get('#autocompleter').then((jQueryElement) => {
-      autocompleteSettings.input = jQueryElement.get(0) as HTMLInputElement
+    cy.get('#autocompleter').then((indexQueryElement) => {
+      autocompleteSettings.input = indexQueryElement.get(0) as HTMLInputElement
       autocomplete(autocompleteSettings as AutocompleteSettings<AutocompleteItem>)
     })
     // Type some text into the input and select the first element using arrow keys
@@ -72,6 +63,7 @@ describe('autocomplete end-to-end strict tests', () => {
       .type('{enter}')
       .then(() => {
         expect(spyOnSelect).to.be.calledOnce
+        // eslint-disable-next-line unicorn/no-useless-undefined
         expect(spyOnSelect.getCall(0).args[0]).to.eql(undefined)
         expect(spyFreeTextSelect).to.not.be.called
       })
@@ -83,46 +75,38 @@ describe('autocomplete end-to-end strict tests', () => {
     // @ts-ignore
     cy.visit('./static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
-    cy.get('#autocompleter').then((jQueryElement) => {
+    cy.get('#autocompleter').then((indexQueryElement) => {
       autocomplete({
         autoselectfirst: false,
-        fetch: function (
-          search: string,
-          update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void,
-          _: EventTrigger
-        ) {
+        fetch(search: string, update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void) {
           update([])
         },
-        onSelect: function (item: AutocompleteItem | undefined) {
+        onSelect(item: AutocompleteItem | undefined) {
           if (item && item.label) {
-            jQueryElement.val(item.label)
+            indexQueryElement.val(item.label)
           } else {
-            jQueryElement.val('undefined')
+            indexQueryElement.val('undefined')
           }
         },
         strict: false,
-        input: <HTMLInputElement>jQueryElement.get(0),
+        input: <HTMLInputElement>indexQueryElement.get(0),
       })
     })
     // Type some text into the input and select the first element using arrow keys
     cy.get('#autocompleter').type(inputText).type('{downarrow}').type('{enter}')
     // Should click on the first element on the list
-    cy.get('#autocompleter').then((jQueryElement) => {
-      expect(jQueryElement.val()).to.be.equal('United')
+    cy.get('#autocompleter').then((indexQueryElement) => {
+      expect(indexQueryElement.val()).to.be.equal('United')
     })
   })
   it('should call onFreeTextSelect when strict is true', function () {
     const inputText = 'United'
-    let autocompleteSettings: Partial<AutocompleteSettings<AutocompleteItem>> = {
+    const autocompleteSettings: Partial<AutocompleteSettings<AutocompleteItem>> = {
       autoselectfirst: false,
-      fetch: function (
-        search: string,
-        update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void,
-        _: EventTrigger
-      ) {
+      fetch(search: string, update: <AutocompleteItem>(items: AutocompleteItem[] | false) => void) {
         update([])
       },
-      onSelect: function () {},
+      onSelect() {},
       onFreeTextSelect: () => {},
       strict: false,
     }
@@ -132,8 +116,8 @@ describe('autocomplete end-to-end strict tests', () => {
     // @ts-ignore
     cy.visit('./static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
-    cy.get('#autocompleter').then((jQueryElement) => {
-      autocompleteSettings.input = jQueryElement.get(0) as HTMLInputElement
+    cy.get('#autocompleter').then((indexQueryElement) => {
+      autocompleteSettings.input = indexQueryElement.get(0) as HTMLInputElement
       autocomplete(autocompleteSettings as AutocompleteSettings<AutocompleteItem>)
     })
     // Type some text into the input and select the first element using arrow keys

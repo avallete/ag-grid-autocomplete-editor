@@ -5,3 +5,6 @@ tests/cypress/screenshots
 # node
 node_modules
 tests/node_modules
+
+*.d.ts
+*.js
