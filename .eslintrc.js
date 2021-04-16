@@ -5,7 +5,7 @@ const tsExtends = [
   'plugin:radar/recommended',
 ]
 const CYPRESS_TS_OVERRIDE = {
-  files: ['tests/cypress/**/*.ts'],
+  files: ['cypress/**/*.ts'],
   parserOptions: {
     project: './tsconfig.eslint.json',
     tsconfigRootDir: __dirname,

@@ -5,7 +5,7 @@ describe('ag-grid-autocomplete-editor end-to-end required option tests', () => {
   it('should not remove actual value by starting edit with delete', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },
@@ -60,7 +60,7 @@ describe('ag-grid-autocomplete-editor end-to-end required option tests', () => {
   it('should keep last valid value if new value does not match any item', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },
@@ -115,7 +115,7 @@ describe('ag-grid-autocomplete-editor end-to-end required option tests', () => {
   it('should keep last valid value if isCancelBeforeEnd called', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },

@@ -34,17 +34,18 @@ const KEYS_TO_IGNORE = new Set([
 ])
 
 export { AutocompleteItem, EventTrigger, AutocompleteSettings }
-/* eslint-disable unicorn/no-useless-undefined */
 
 export default function autocomplete<T extends AutocompleteItem>(
   settings: AutocompleteSettings<T>
 ): AutocompleteResult {
+  /* eslint-disable unicorn/no-useless-undefined */
   const [getDocument, setDocument] = singleton(settings.input.ownerDocument || window.document)
   const [getItems, setItems] = singleton<T[]>([])
   const [getInputValue, setInputValue] = singleton('')
   const [getSelected, setSelected] = singleton<T | undefined>(undefined)
   const [getKeypressCounter, setKeypressCounter] = singleton(0)
   const [getDebounceTimer, setDebounceTimer] = singleton<number | undefined>(undefined)
+  /* eslint-enable */
 
   const {
     strict,
@@ -116,6 +117,7 @@ export default function autocomplete<T extends AutocompleteItem>(
     incrementKeypressCounter()
     setItems([])
     setInputValue('')
+    // eslint-disable-next-line unicorn/no-useless-undefined
     setSelected(undefined)
     detach()
   }
@@ -202,6 +204,7 @@ export default function autocomplete<T extends AutocompleteItem>(
         empty.className = 'empty'
         empty.textContent = emptyMsg
         container.append(empty)
+        // eslint-disable-next-line unicorn/no-useless-undefined
         setSelected(undefined)
       } else {
         clear()
@@ -288,6 +291,7 @@ export default function autocomplete<T extends AutocompleteItem>(
     const items = getItems()
     const selected = getSelected()
     if (items.length === 0) {
+      // eslint-disable-next-line unicorn/no-useless-undefined
       setSelected(undefined)
       return
     }
@@ -310,6 +314,7 @@ export default function autocomplete<T extends AutocompleteItem>(
     const items = getItems()
     const selected = getSelected()
     if (items.length === 0) {
+      // eslint-disable-next-line unicorn/no-useless-undefined
       setSelected(undefined)
       return
     }

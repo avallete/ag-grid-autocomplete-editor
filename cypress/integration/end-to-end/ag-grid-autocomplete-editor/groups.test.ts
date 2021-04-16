@@ -5,7 +5,7 @@ describe('ag-grid-autocomplete-editor end-to-end groups option tests', () => {
   it('should render groups when the data is present', function () {
     cy.fixture('selectDatas/groups.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },
@@ -54,7 +54,7 @@ describe('ag-grid-autocomplete-editor end-to-end groups option tests', () => {
   it('should render group multiples time in data order foreach group change', function () {
     cy.fixture('selectDatas/groups.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     const dataToAdd = [
       {
         value: 11,
@@ -120,7 +120,7 @@ describe('ag-grid-autocomplete-editor end-to-end groups option tests', () => {
   it('should switch from elements from one group into another when keydown', function () {
     cy.fixture('selectDatas/groups.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },

@@ -5,7 +5,7 @@ describe('ag-grid-autocomplete-editor end-to-end customization option tests', ()
   it('should customize autocomplete items according to render function', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },

@@ -6,7 +6,7 @@ describe('autocomplete end-to-end minlength tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this

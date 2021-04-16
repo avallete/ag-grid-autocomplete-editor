@@ -27,7 +27,7 @@ describe('autocomplete unit testing constructor', () => {
     expect(result.destroy).to.be.a('function')
   })
   it('should properly mount on sandbox page', () => {
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element
     cy.get('#autocompleter').then((currentSubject) => {
       const result = autocomplete({

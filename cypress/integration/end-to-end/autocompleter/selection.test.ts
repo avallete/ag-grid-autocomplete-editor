@@ -5,7 +5,7 @@ describe('autocomplete end-to-end selection tests', () => {
     const inputText = 'United'
     const emptyMessage = 'Nothing found message'
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       autocomplete({
@@ -36,7 +36,7 @@ describe('autocomplete end-to-end selection tests', () => {
     const emptyMessage = 'Nothing found message'
     const inputText = 'United'
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       autocomplete({
@@ -73,7 +73,7 @@ describe('autocomplete end-to-end selection tests', () => {
     const inputText = 'United'
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -107,7 +107,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -141,7 +141,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -173,7 +173,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -205,7 +205,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -242,7 +242,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -280,7 +280,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -313,7 +313,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -346,7 +346,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -379,7 +379,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this
@@ -412,7 +412,7 @@ describe('autocomplete end-to-end selection tests', () => {
 
     cy.fixture('selectDatas/united.json').as('selectData')
     // @ts-ignore
-    cy.visit('./static/autocomplete-test-sandbox.html')
+    cy.visit('./cypress/static/autocomplete-test-sandbox.html')
     // Get the input element and setup autocomplete to it
     cy.get('#autocompleter').then((indexQueryElement) => {
       const { selectData } = this

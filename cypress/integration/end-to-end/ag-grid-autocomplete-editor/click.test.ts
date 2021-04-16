@@ -5,7 +5,7 @@ describe('ag-grid-autocomplete-editor end-to-end clicks tests', () => {
   it('should create and enter edit mode with AutocompleteSelectCellEditor when cell double clicked', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },
@@ -52,7 +52,7 @@ describe('ag-grid-autocomplete-editor end-to-end clicks tests', () => {
   it('should close the autocomplete editor when another cell clicked is triggered', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined, 'second-column': undefined },
@@ -108,7 +108,7 @@ describe('ag-grid-autocomplete-editor end-to-end clicks tests', () => {
   it('should not create if the cell is just single clicked', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },
@@ -155,7 +155,7 @@ describe('ag-grid-autocomplete-editor end-to-end clicks tests', () => {
   it('should select autocomplete the data and put it into ag-grid when clicked 1st', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },
@@ -206,7 +206,7 @@ describe('ag-grid-autocomplete-editor end-to-end clicks tests', () => {
   it('should select autocomplete the data and put it into ag-grid when clicked 2nd', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore
-    cy.visit('./static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
     cy.get('#myGrid').then((indexQueryElement) => {
       const rowDatas = [
         { 'autocomplete-column': undefined },

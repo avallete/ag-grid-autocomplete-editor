@@ -14,7 +14,7 @@ module.exports = {
   },
 
   output: {
-    path: path.resolve('./'),
+    path: path.resolve('./dist/'),
     publicPath: 'http://localhost:8080/',
     filename: 'ag-grid-autocomplete-editor.js',
     libraryTarget: 'umd',
