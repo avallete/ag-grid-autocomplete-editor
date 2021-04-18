@@ -120,3 +120,7 @@ typings/
 .dccache
 cypress/videos/
 dist/
+*.d.ts
+*.js
+*.map.js
+*.css
