@@ -3,13 +3,13 @@
   "version": "0.0.0-development",
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
-  "main": "dist/ag-grid-autocomplete-editor.js",
+  "main": "dist/index.js",
   "files": [
-    "ag-grid-autocomplete-editor.d.ts",
-    "types.d.ts",
-    "autocompleter/types.d.ts",
-    "dist/ag-grid-autocomplete-editor.js",
-    "dist/ag-grid-autocomplete-editor.js.map",
+    "types/ag-grid-autocomplete-editor.d.ts",
+    "types/types.d.ts",
+    "types/autocompleter/types.d.ts",
+    "dist/index.js",
+    "dist/index.js.map",
     "dist/main.css",
     "dist/main.css.map"
   ],
@@ -62,7 +62,7 @@
     "select"
   ],
   "peerDependencies": {
-    "@ag-grid-community/core": "^25.0.1"
+    "@ag-grid-community/core": "^25.x"
   },
   "devDependencies": {
     "@commitlint/cli": "12.1.1",
@@ -73,36 +73,36 @@
     "@semantic-release/github": "github:semantic-release/github",
     "@semantic-release/release-notes-generator": "github:semantic-release/release-notes-generator",
     "@types/chai": "^4.2.16",
-    "@types/node": "14.14.37",
-    "@typescript-eslint/eslint-plugin": "4.20.0",
-    "@typescript-eslint/parser": "4.20.0",
+    "@types/node": "14.14.41",
+    "@typescript-eslint/eslint-plugin": "4.22.0",
+    "@typescript-eslint/parser": "4.22.0",
     "ag-grid-autocomplete-editor": "file:./",
     "ag-grid-community": "^25.1.0",
     "autoprefixer": "10.2.5",
-    "css-loader": "5.2.0",
-    "cypress": "^6.8.0",
+    "css-loader": "5.2.2",
+    "cypress": "^7.1.0",
     "cypress-real-events": "^1.3.0",
-    "eslint": "7.23.0",
+    "eslint": "7.24.0",
     "eslint-config-airbnb-typescript": "12.3.1",
-    "eslint-config-prettier": "8.1.0",
+    "eslint-config-prettier": "8.2.0",
     "eslint-plugin-chai-friendly": "^0.6.0",
     "eslint-plugin-cypress": "2.11.2",
-    "eslint-plugin-prettier": "3.3.1",
+    "eslint-plugin-prettier": "3.4.0",
     "eslint-plugin-radar": "0.2.1",
     "eslint-plugin-unicorn": "29.0.0",
     "husky": "4.3.8",
     "lint-staged": "10.5.4",
-    "mini-css-extract-plugin": "1.4.0",
+    "mini-css-extract-plugin": "1.5.0",
     "postcss-loader": "5.2.0",
     "postcss-scss": "3.0.5",
     "prettier": "2.2.1",
-    "sass": "1.32.8",
+    "sass": "1.32.10",
     "sass-loader": "11.0.1",
     "semantic-release": "17.4.2",
     "style-loader": "2.0.0",
-    "ts-loader": "8.1.0",
-    "typescript": "4.2.3",
-    "webpack": "5.30.0",
+    "ts-loader": "9.0.0",
+    "typescript": "4.2.4",
+    "webpack": "5.33.2",
     "webpack-cli": "4.6.0",
     "webpack-dev-server": "3.11.2"
   },
@@ -138,5 +138,5 @@
       "@semantic-release/github"
     ]
   },
-  "types": "ag-grid-autocomplete-editor.d.ts"
+  "types": "types/ag-grid-autocomplete-editor.d.ts"
 }
