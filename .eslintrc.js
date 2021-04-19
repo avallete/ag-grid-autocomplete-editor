@@ -17,6 +17,7 @@ const CYPRESS_TS_OVERRIDE = {
     'no-new': 'off',
     'func-names': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
   },
 }
 
@@ -29,6 +30,9 @@ const TS_OVERRIDE = {
   },
   plugins: ['@typescript-eslint'],
   extends: tsExtends,
+  rules: {
+    '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+  },
   overrides: [CYPRESS_TS_OVERRIDE],
 }
 
