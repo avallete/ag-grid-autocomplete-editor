@@ -577,6 +577,90 @@ describe('ag-grid-autocomplete-editor end-to-end basic tests', () => {
     // The second column should be selected
     cy.get('[row-index="0"] > [aria-colindex="2"]').should('have.class', 'ag-cell-focus')
   })
+  it('should select autocomplete the data and put it into ag-grid and go the the next column in edit mode when Tab hit and focus the input field', function () {
+    cy.fixture('selectDatas/names.json').as('selectDatas')
+    // @ts-ignore
+    cy.visit('./cypress/static/ag-grid-autocomplete-editor-test-sandbox.html')
+    cy.get('#myGrid').then((indexQueryElement) => {
+      const rowDatas = [
+        { 'autocomplete-column': undefined, 'second-column': undefined },
+        { 'autocomplete-column': undefined, 'second-column': undefined },
+        { 'autocomplete-column': undefined, 'second-column': undefined },
+        { 'autocomplete-column': undefined, 'second-column': undefined },
+        { 'autocomplete-column': undefined, 'second-column': undefined },
+      ]
+      const columnDefs: ColDef[] = [
+        {
+          headerName: 'Already present data selector',
+          field: 'autocomplete-column',
+          // @ts-ignore
+          cellEditor: AutocompleteSelectCellEditor,
+          cellEditorParams: {
+            selectData: this.selectDatas,
+            placeholder: 'Select an option',
+          },
+          valueFormatter: (parameters) => {
+            if (parameters.value) {
+              return parameters.value.label || parameters.value.value || parameters.value
+            }
+            return ''
+          },
+          editable: true,
+        },
+        {
+          headerName: 'Second Column',
+          field: 'second-column',
+          // @ts-ignore
+          cellEditor: AutocompleteSelectCellEditor,
+          cellEditorParams: {
+            selectData: this.selectDatas,
+            placeholder: 'Select an option',
+          },
+          valueFormatter: (parameters) => {
+            if (parameters.value) {
+              return parameters.value.label || parameters.value.value || parameters.value
+            }
+            return ''
+          },
+          editable: true,
+        },
+      ]
+      const gridOptions = {
+        columnDefs,
+        rowData: rowDatas,
+        suppressScrollOnNewData: false,
+        suppressBrowserResizeObserver: true,
+      }
+      new Grid(<HTMLElement>indexQueryElement.get(0), gridOptions)
+    })
+    // ag-grid should be created on the DOM
+    cy.get('.ag-root').should('exist')
+    cy.get('[row-index="0"] > [aria-colindex="1"]').contains('Kenya Gallagher').should('not.exist')
+    cy.get('[row-index="0"] > [aria-colindex="2"]').contains('Dana Nolan').should('not.exist')
+    // Start the edition
+    cy.get('[row-index="0"] > [aria-colindex="1"]').type('{enter}').type('Ke')
+    cy.get('.autocomplete.ag-cell-editor-autocomplete').should('exist')
+    // Should select the first element and hit enter it to select
+    cy.get('.ag-column-hover > .ag-wrapper > .ag-input-field-input').focus().realPress('Tab')
+    // input should have been closed
+    cy.get(
+      '[row-index="0"] > [aria-colindex="1"] > div.ag-cell-editor-autocomplete-wrapper > .ag-cell-editor-autocomplete-input'
+    ).should('not.exist')
+    // Input should have been selected and sent to ag-grid
+    cy.get('[row-index="0"] > [aria-colindex="1"]').contains('Kelley Santana').should('exist')
+    // The second column should be selected and in edit mode
+    cy.get('[row-index="0"] > [aria-colindex="2"]').should('have.class', 'ag-cell-inline-editing')
+    // The next input field should be focused
+    cy.focused().should('have.class', 'ag-cell-editor-autocomplete-input')
+    cy.get('[row-index="0"] > [aria-colindex="2"].ag-cell-inline-editing > .ag-wrapper > .ag-input-field-input').should(
+      'exist'
+    )
+    // Should be able to type data into the next input
+    cy.focused().type('Dana')
+    cy.get('.autocomplete.ag-cell-editor-autocomplete').should('exist')
+    cy.focused().type('{enter}')
+    cy.get('[row-index="0"] > [aria-colindex="2"]').contains('Dana Nolan').should('exist')
+  })
   it('should remove actual value by starting edit with delete', function () {
     cy.fixture('selectDatas/names.json').as('selectDatas')
     // @ts-ignore

@@ -1,4 +1,5 @@
 import { AutocompleteSelectCellEditor } from 'ag-grid-autocomplete-editor'
+
 import { ColDef, Grid } from 'ag-grid-community'
 
 describe('ag-grid-autocomplete-editor end-to-end groups option tests', () => {
