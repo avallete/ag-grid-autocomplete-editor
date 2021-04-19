@@ -51,7 +51,7 @@ You can configure and customize the cell and behavior with the following `cellEd
 
 ```js
 import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
-import 'ag-grid-autocomplete-editor/main.css';
+import 'ag-grid-autocomplete-editor/dist/main.css';
 ...
 {
    headerName: "Already present data selector",
@@ -79,7 +79,7 @@ import 'ag-grid-autocomplete-editor/main.css';
 
 ```js
 import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
-import 'ag-grid-autocomplete-editor/main.css';
+import 'ag-grid-autocomplete-editor/dist/main.css';
 ...
 {
    headerName: "Autocomplete with API Country based",
@@ -120,7 +120,7 @@ import 'ag-grid-autocomplete-editor/main.css';
 
 ```js
 import {AutocompleteSelectCellEditor} from 'ag-grid-autocomplete-editor';
-import 'ag-grid-autocomplete-editor/main.css';
+import 'ag-grid-autocomplete-editor/dist/main.css';
 ...
 {
    headerName: "Already present data selector",
