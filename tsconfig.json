@@ -11,10 +11,9 @@
     "noImplicitThis": true,
     "strict": true,
     "declaration": true,
+    "declarationDir": "./types/",
     "sourceMap": true,
     "experimentalDecorators": true
   },
-  "files": [
-    "ag-grid-autocomplete-editor.ts"
-  ]
+  "files": ["ag-grid-autocomplete-editor.ts"]
 }

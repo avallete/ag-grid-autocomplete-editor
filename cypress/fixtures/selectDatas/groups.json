@@ -1,0 +1,57 @@
+[
+  {
+    "value": 0,
+    "label": "Claudine Duffy",
+    "group": "Female"
+  },
+  {
+    "value": 1,
+    "label": "Dana Nolan",
+    "group": "Female"
+  },
+  {
+    "value": 2,
+    "label": "Kelley Santana",
+    "group": "Female"
+  },
+  {
+    "value": 3,
+    "label": "Robin Wilkins",
+    "group": "Mixte"
+  },
+  {
+    "value": 4,
+    "label": "Kenya Gallagher",
+    "group": "Female"
+  },
+  {
+    "value": 5,
+    "label": "George Buston",
+    "group": "Male"
+  },
+  {
+    "value": 6,
+    "label": "Anthony Gricole",
+    "group": "Male"
+  },
+  {
+    "value": 7,
+    "label": "Clodomir De Cuivre Champ",
+    "group": "Male"
+  },
+  {
+    "value": 8,
+    "label": "Ken Boggart",
+    "group": "Male"
+  },
+  {
+    "value": 9,
+    "label": "Kennue Reeves",
+    "group": "Male"
+  },
+  {
+    "value": 10,
+    "label": "Clannie Kracki",
+    "group": "Mixte"
+  }
+]

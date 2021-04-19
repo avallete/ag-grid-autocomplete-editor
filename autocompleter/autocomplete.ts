@@ -1,474 +1,453 @@
-/*
- * https://github.com/kraaden/autocomplete
- * Copyright (c) 2016 Denys Krasnoshchok
- * MIT License
- */
-
-export const enum EventTrigger {
-    Keyboard = 0,
-    Focus = 1
-}
-
-export interface AutocompleteItem {
-    label?: string;
-    group?: string;
-}
-
-export interface AutocompleteSettings<T extends AutocompleteItem> {
-    input: HTMLInputElement;
-    render?: (item: T, currentValue: string) => HTMLDivElement | undefined;
-    renderGroup?: (name: string, currentValue: string) => HTMLDivElement | undefined;
-    className?: string;
-    minLength?: number;
-    emptyMsg?: string;
-    strict: boolean;
-    autoselectfirst: boolean;
-    onFreeTextSelect?: (item: T, input: HTMLInputElement) => void;
-    onSelect: (item: T | undefined, input: HTMLInputElement, event: KeyboardEvent | MouseEvent) => void;
-    /**
-     * Show autocomplete on focus event. Focus event will ignore the `minLength` property and will always call `fetch`.
-     */
-    showOnFocus?: boolean;
-    fetch: (text: string, update: (items: T[] | false) => void, trigger: EventTrigger) => void;
-    debounceWaitMs?: number;
-    /**
-     * Callback for additional autocomplete customization
-     * @param {HTMLInputElement} input - input box associated with autocomplete
-     * @param {ClientRect | DOMRect} inputRect - size of the input box and its position relative to the viewport
-     * @param {HTMLDivElement} container - container with suggestions
-     * @param {number} maxHeight - max height that can be used by autocomplete
-     */
-    customize?: (input: HTMLInputElement, inputRect: ClientRect | DOMRect, container: HTMLDivElement, maxHeight: number) => void;
-}
-
-export interface AutocompleteResult {
-    destroy: () => void;
-}
+import { removeChildren, renderItems } from './rendering'
+import { AutocompleteItem, EventTrigger, AutocompleteSettings, AutocompleteResult } from './types'
+import singleton from './singleton'
 
 const enum Keys {
-    Enter = 13,
-    Esc = 27,
-    Up = 38,
-    Down = 40,
-    Left = 37,
-    Right = 39,
-    Shift = 16,
-    Ctrl = 17,
-    Alt = 18,
-    CapsLock = 20,
-    WindowsKey = 91,
-    Tab = 9
+  Enter = 13,
+  Esc = 27,
+  Up = 38,
+  Down = 40,
+  Left = 37,
+  Right = 39,
+  Shift = 16,
+  Ctrl = 17,
+  Alt = 18,
+  CapsLock = 20,
+  WindowsKey = 91,
+  Tab = 9,
 }
 
-export default function autocomplete<T extends AutocompleteItem>(this: any, settings: AutocompleteSettings<T>): AutocompleteResult {
+const KEYUP_EVENT_NAME = 'input'
 
-    // just an alias to minimize JS file size
-    // use settings.input.ownerDocument if possible, to avoid iFrame scopes confusion
-    let doc = settings.input.ownerDocument || window.document;
-    const container: HTMLDivElement = doc.createElement("div");
-    const containerStyle = container.style;
-    const userAgent = navigator.userAgent;
-    const mobileFirefox = userAgent.indexOf("Firefox") !== -1 && userAgent.indexOf("Mobile") !== -1;
-    const debounceWaitMs = settings.debounceWaitMs || 0;
-    const strict = settings.strict;
-    const autoselectfirst = settings.autoselectfirst;
-    const onFreeTextSelect = settings.onFreeTextSelect;
+const KEYS_TO_IGNORE = new Set([
+  Keys.Up,
+  Keys.Enter,
+  Keys.Esc,
+  Keys.Right,
+  Keys.Left,
+  Keys.Shift,
+  Keys.Ctrl,
+  Keys.Alt,
+  Keys.CapsLock,
+  Keys.WindowsKey,
+  Keys.Tab,
+])
 
-    // 'keyup' event will not be fired on Mobile Firefox, so we have to use 'input' event instead
-    const keyUpEventName = mobileFirefox ? "input" : "keyup";
+export { AutocompleteItem, EventTrigger, AutocompleteSettings }
 
-    let items: T[] = [];
-    let inputValue = "";
-    const minLen = settings.minLength !== undefined ? settings.minLength : 2;
-    const showOnFocus = settings.showOnFocus;
-    let selected: T | undefined;
-    let keypressCounter = 0;
-    let debounceTimer: number | undefined;
+export default function autocomplete<T extends AutocompleteItem>(
+  settings: AutocompleteSettings<T>
+): AutocompleteResult {
+  /* eslint-disable unicorn/no-useless-undefined */
+  const [getDocument, setDocument] = singleton(settings.input.ownerDocument || window.document)
+  const [getItems, setItems] = singleton<T[]>([])
+  const [getInputValue, setInputValue] = singleton('')
+  const [getSelected, setSelected] = singleton<T | undefined>(undefined)
+  const [getKeypressCounter, setKeypressCounter] = singleton(0)
+  const [getDebounceTimer, setDebounceTimer] = singleton<number | undefined>(undefined)
+  /* eslint-enable */
 
-    if (!settings.input) {
-        throw new Error("input undefined");
+  const {
+    strict,
+    autoselectfirst,
+    onFreeTextSelect,
+    minLength,
+    showOnFocus,
+    input,
+    className,
+    customize,
+    emptyMsg,
+    render,
+    renderGroup,
+  } = settings
+  const debounceWaitMs = settings.debounceWaitMs || 0
+  const minimumInputLength = minLength || 2
+  const container: HTMLDivElement = document.createElement('div')
+  const containerStyle = container.style
+
+  container.className = `autocomplete ${className || ''}`
+  containerStyle.position = 'fixed'
+
+  const incrementKeypressCounter = () => {
+    setKeypressCounter(getKeypressCounter() + 1)
+  }
+
+  /**
+   * Detach the container from DOM
+   */
+  function detach() {
+    if (container) {
+      container.remove()
+    }
+  }
+
+  /**
+   * Clear debouncing timer if assigned
+   */
+  function clearDebounceTimer() {
+    const debounceTimer = getDebounceTimer()
+    if (debounceTimer !== undefined) {
+      window.clearTimeout(debounceTimer)
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      setDebounceTimer(undefined)
+    }
+  }
+
+  /**
+   * Attach the container to DOM
+   */
+  function attach() {
+    setDocument(input.ownerDocument || window.document)
+    if (!container.parentNode) {
+      getDocument().body.append(container)
+    }
+  }
+
+  /**
+   * Check if container for autocomplete is displayed
+   */
+  function containerDisplayed(): boolean {
+    return !!container.parentNode
+  }
+
+  /**
+   * Clear autocomplete state and hide container
+   */
+  function clear() {
+    incrementKeypressCounter()
+    setItems([])
+    setInputValue('')
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    setSelected(undefined)
+    detach()
+  }
+
+  /**
+   * Update autocomplete position to put it under the input field
+   */
+  function updatePosition() {
+    if (containerDisplayed()) {
+      const document = getDocument()
+
+      containerStyle.height = 'auto'
+      containerStyle.width = `${input.offsetWidth}px`
+
+      const inputRect = input.getBoundingClientRect()
+      const top = inputRect.top + input.offsetHeight
+      let maxHeight = document.defaultView!.innerHeight - top
+
+      if (maxHeight < 0) {
+        maxHeight = 0
+      }
+
+      containerStyle.top = `${top}px`
+      containerStyle.bottom = ''
+      containerStyle.left = `${inputRect.left}px`
+      containerStyle.maxHeight = `${maxHeight}px`
+
+      if (customize) {
+        customize(input, inputRect, container, maxHeight)
+      }
+    }
+  }
+
+  /**
+   * Automatically move scroll bar if selected item is not visible
+   */
+  function updateScroll() {
+    let element = container.querySelector('.selected') as HTMLDivElement
+    if (element) {
+      // make group visible
+      const previous = element.previousElementSibling
+      if (previous && previous.previousElementSibling === null && previous.className.includes('group')) {
+        element = previous as HTMLDivElement
+      }
+
+      if (element.offsetTop < container.scrollTop) {
+        container.scrollTop = element.offsetTop
+      } else {
+        const selectBottom = element.offsetTop + element.offsetHeight
+        const containerBottom = container.scrollTop + container.offsetHeight
+        if (selectBottom > containerBottom) {
+          container.scrollTop += selectBottom - containerBottom
+        }
+      }
+    }
+  }
+
+  /**
+   * Handle the click on an item of the selection list
+   * @param item: data of the clicked item
+   * @param event: MouseEvent who has triggered the selection
+   */
+  function itemClickHandler(item: T, event: MouseEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+    settings.onSelect(item, input, event)
+    clear()
+  }
+
+  /**
+   * Redraw the autocomplete div element with suggestions
+   */
+  function update() {
+    // Clear all child from container
+    removeChildren(container)
+
+    const items = getItems()
+    const fragment = renderItems<T>(items, getSelected(), getInputValue(), itemClickHandler, render, renderGroup)
+    container.append(fragment)
+    if (items.length === 0 && strict) {
+      // if no items display empty message
+      if (emptyMsg) {
+        const empty = document.createElement('div')
+        empty.className = 'empty'
+        empty.textContent = emptyMsg
+        container.append(empty)
+        // eslint-disable-next-line unicorn/no-useless-undefined
+        setSelected(undefined)
+      } else {
+        clear()
+        return
+      }
     }
 
-    const input: HTMLInputElement = settings.input;
+    attach()
+    updatePosition()
+    updateScroll()
+  }
 
-    container.className = "autocomplete " + (settings.className || "");
-    containerStyle.position = "fixed";
+  function updateIfDisplayed() {
+    if (containerDisplayed()) {
+      update()
+    }
+  }
 
-    /**
-     * Detach the container from DOM
-     */
-    function detach(): void {
-        const parent = container.parentNode;
-        if (parent) {
-            parent.removeChild(container);
-        }
+  function resizeEventHandler() {
+    updateIfDisplayed()
+  }
+
+  function scrollEventHandler(event: Event) {
+    if (event.target !== container) {
+      updateIfDisplayed()
+    } else {
+      event.preventDefault()
+    }
+  }
+
+  function debouncedFetch(trigger: EventTrigger) {
+    const savedKeypressCounter = getKeypressCounter()
+    const debouncingTime = trigger === EventTrigger.Keyboard ? debounceWaitMs : 0
+    const { value } = input
+    // Hydrate this.items with retrieved items
+    const handleFetchResult = (elements: T[] | false) => {
+      if (getKeypressCounter() === savedKeypressCounter && elements) {
+        setItems(elements)
+        setInputValue(value)
+        setSelected(elements.length > 0 && autoselectfirst ? elements[0] : undefined)
+        update()
+      }
+    }
+    return window.setTimeout(() => {
+      settings.fetch(value, handleFetchResult, trigger)
+    }, debouncingTime)
+  }
+
+  function startFetch(trigger: EventTrigger) {
+    // if multiple keys were pressed, before we get update from server,
+    // this may cause redrawing our autocomplete multiple times after the last key press.
+    // to avoid this, the number of times keyboard was pressed will be
+    // saved and checked before redraw our autocomplete box.
+    incrementKeypressCounter()
+
+    const { value } = input
+    if (value.length >= minimumInputLength || trigger === EventTrigger.Focus) {
+      clearDebounceTimer()
+      setDebounceTimer(debouncedFetch(trigger))
+    } else {
+      clear()
+    }
+  }
+
+  function keyupEventHandler(event: KeyboardEvent) {
+    const keyCode = event.which || event.keyCode || 0
+
+    if (KEYS_TO_IGNORE.has(keyCode)) {
+      return
     }
 
-    /**
-     * Clear debouncing timer if assigned
-     */
-    function clearDebounceTimer(): void {
-        if (debounceTimer) {
-            window.clearTimeout(debounceTimer);
-        }
+    // the down key is used to open autocomplete
+    if (keyCode === Keys.Down && containerDisplayed()) {
+      return
     }
 
-    /**
-     * Attach the container to DOM
-     */
-    function attach(): void {
-        doc = settings.input.ownerDocument || window.document;
-        if (!container.parentNode) {
-            doc.body.appendChild(container);
-        }
+    startFetch(EventTrigger.Keyboard)
+  }
+
+  /**
+   * Select the previous item in suggestions
+   */
+  function selectPreviousItem() {
+    const items = getItems()
+    const selected = getSelected()
+    if (items.length === 0) {
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      setSelected(undefined)
+      return
     }
-
-    /**
-     * Check if container for autocomplete is displayed
-     */
-
-    function containerDisplayed(): boolean {
-        return !!container.parentNode;
+    if (selected === undefined || selected === items[0]) {
+      setSelected(items[items.length - 1])
+      return
     }
-
-    /**
-     * Clear autocomplete state and hide container
-     */
-
-    function clear(): void {
-        keypressCounter++;
-        items = [];
-        inputValue = "";
-        selected = undefined;
-        detach();
+    for (let index = items.length - 1; index > 0; index -= 1) {
+      if (selected === items[index] || index === 1) {
+        setSelected(items[index - 1])
+        return
+      }
     }
+  }
 
-    /**
-     * Update autocomplete position
-     */
-    function updatePosition(): void {
-        if (!containerDisplayed()) {
-            return;
-        }
-
-        containerStyle.height = "auto";
-        containerStyle.width = input.offsetWidth + "px";
-
-        const inputRect = input.getBoundingClientRect();
-        const top = inputRect.top + input.offsetHeight;
-        let maxHeight = doc.defaultView!.innerHeight - top;
-
-        if (maxHeight < 0) {
-            maxHeight = 0;
-        }
-
-        containerStyle.top = top + "px";
-        containerStyle.bottom = "";
-        containerStyle.left = inputRect.left + "px";
-        containerStyle.maxHeight = maxHeight + "px";
-
-        if (settings.customize) {
-            settings.customize(input, inputRect, container, maxHeight);
-        }
+  /**
+   * Select the next item in suggestions
+   */
+  function selectNextItem() {
+    const items = getItems()
+    const selected = getSelected()
+    if (items.length === 0) {
+      // eslint-disable-next-line unicorn/no-useless-undefined
+      setSelected(undefined)
+      return
     }
-
-    /**
-     * Redraw the autocomplete div element with suggestions
-     */
-
-    function update(): void {
-
-        // delete all children from autocomplete DOM container
-        while (container.firstChild) {
-            container.removeChild(container.firstChild);
-        }
-
-        // function for rendering autocomplete suggestions
-        // noinspection JSUnusedLocalSymbols
-        let render = function (item: T, currentValue: string): HTMLDivElement | undefined {
-            const itemElement = doc.createElement("div");
-            itemElement.textContent = item.label || "";
-            return itemElement;
-        };
-        if (settings.render) {
-            render = settings.render;
-        }
-
-        // function to render autocomplete groups
-        // noinspection JSUnusedLocalSymbols
-        let renderGroup = function (groupName: string, currentValue: string): HTMLDivElement | undefined {
-            const groupDiv = doc.createElement("div");
-            groupDiv.textContent = groupName;
-            return groupDiv;
-        };
-        if (settings.renderGroup) {
-            renderGroup = settings.renderGroup;
-        }
-
-        const fragment = doc.createDocumentFragment();
-        let prevGroup = "#9?$";
-
-        items.forEach(function (item: T): void {
-            if (item.group && item.group !== prevGroup) {
-                prevGroup = item.group;
-                const groupDiv = renderGroup(item.group, inputValue);
-                if (groupDiv) {
-                    groupDiv.className += " group";
-                    fragment.appendChild(groupDiv);
-                }
-            }
-            const div = render(item, inputValue);
-            if (div) {
-                div.addEventListener("click", function (ev: MouseEvent): void {
-                    settings.onSelect(item, input, ev);
-                    clear();
-                    ev.preventDefault();
-                    ev.stopPropagation();
-                });
-                if (item === selected) {
-                    div.className += " selected";
-                }
-                fragment.appendChild(div);
-            }
-        });
-        container.appendChild(fragment);
-        if (items.length < 1 && strict) {
-            if (settings.emptyMsg) {
-                const empty = doc.createElement("div");
-                empty.className = "empty";
-                empty.textContent = settings.emptyMsg;
-                container.appendChild(empty);
-                selected = undefined;
-            } else {
-                clear();
-                return;
-            }
-        }
-
-        attach();
-        updatePosition();
-
-        updateScroll();
+    if (selected === undefined || selected === items[items.length - 1]) {
+      // eslint-disable-next-line prefer-destructuring
+      setSelected(items[0])
+      return
     }
-
-    function updateIfDisplayed(): void {
-        if (containerDisplayed()) {
-            update();
-        }
+    for (let index = 0; index < items.length - 1; index += 1) {
+      if (selected === items[index]) {
+        setSelected(items[index + 1])
+        return
+      }
     }
+  }
 
-    function resizeEventHandler(): void {
-        updateIfDisplayed();
+  function handleArrowKeysDown(arrowKey: Keys.Up | Keys.Down) {
+    const containerIsDisplayed = containerDisplayed()
+    if (containerIsDisplayed && getItems().length > 0) {
+      switch (arrowKey) {
+        case Keys.Up:
+          selectPreviousItem()
+          break
+        case Keys.Down:
+          selectNextItem()
+          break
+        default:
+      }
+      update()
     }
+  }
 
-    function scrollEventHandler(e: Event): void {
-        if (e.target !== container) {
-            updateIfDisplayed();
+  function handleSelectKeysDown(event: KeyboardEvent) {
+    const selected = getSelected()
+    if (strict) {
+      settings.onSelect(selected, input, event)
+    } else {
+      const freeTextSelect = { label: input.value } as T
+      if (selected) {
+        settings.onSelect(selected, input, event)
+        return
+      }
+      if (onFreeTextSelect) {
+        onFreeTextSelect(freeTextSelect, input)
+      }
+      settings.onSelect(freeTextSelect, input, event)
+    }
+    clear()
+  }
+
+  function keydownEventHandler(event: KeyboardEvent) {
+    const keyCode = event.which || event.keyCode || 0
+
+    if (
+      keyCode === Keys.Up ||
+      keyCode === Keys.Down ||
+      keyCode === Keys.Esc ||
+      keyCode === Keys.Enter ||
+      keyCode === Keys.Tab
+    ) {
+      event.preventDefault()
+      if (containerDisplayed()) {
+        event.stopPropagation()
+      }
+      if (keyCode === Keys.Up || keyCode === Keys.Down || keyCode === Keys.Esc) {
+        if (keyCode === Keys.Esc) {
+          settings.onSelect(undefined, input, event)
+          clear()
         } else {
-            e.preventDefault();
+          handleArrowKeysDown(keyCode)
         }
+        return
+      }
+
+      if (keyCode === Keys.Enter || keyCode === Keys.Tab) {
+        handleSelectKeysDown(event)
+      }
     }
+  }
 
-    function keyupEventHandler(ev: KeyboardEvent): void {
-        const keyCode = ev.which || ev.keyCode || 0;
-
-        const ignore = [Keys.Up, Keys.Enter, Keys.Esc, Keys.Right, Keys.Left, Keys.Shift, Keys.Ctrl, Keys.Alt, Keys.CapsLock, Keys.WindowsKey, Keys.Tab];
-        for (const key of ignore) {
-            if (keyCode === key) {
-                return;
-            }
-        }
-
-        // the down key is used to open autocomplete
-        if (keyCode === Keys.Down && containerDisplayed()) {
-            return;
-        }
-
-        startFetch(EventTrigger.Keyboard);
+  function focusEventHandler() {
+    if (showOnFocus) {
+      startFetch(EventTrigger.Focus)
     }
+  }
 
-    /**
-     * Automatically move scroll bar if selected item is not visible
-     */
+  function focusOutEventHandler(event: Event) {
+    // we need to delay clear, because when we click on an item, blur will be called before click and remove items from DOM
+    event.preventDefault()
+    event.stopPropagation()
+    setTimeout(() => {
+      if (getDocument().activeElement !== input) {
+        clear()
+      }
+    }, 200)
+  }
 
-    function updateScroll(): void {
-        const elements = container.getElementsByClassName("selected");
-        if (elements.length > 0) {
-            let element = elements[0] as HTMLDivElement;
+  function removeEventListeners() {
+    const document = getDocument()
 
-            // make group visible
-            const previous = element.previousElementSibling as HTMLDivElement;
-            if (previous && previous.className.indexOf("group") !== -1 && !previous.previousElementSibling) {
-                element = previous;
-            }
+    input.removeEventListener('focus', focusEventHandler)
+    input.removeEventListener('keydown', keydownEventHandler)
+    input.removeEventListener(KEYUP_EVENT_NAME, keyupEventHandler as EventListenerOrEventListenerObject)
+    input.removeEventListener('focusout', focusOutEventHandler)
+    document.removeEventListener('resize', resizeEventHandler)
+    document.removeEventListener('scroll', scrollEventHandler, true)
+  }
 
-            if (element.offsetTop < container.scrollTop) {
-                container.scrollTop = element.offsetTop;
-            } else {
-                const selectBottom = element.offsetTop + element.offsetHeight;
-                const containerBottom = container.scrollTop + container.offsetHeight;
-                if (selectBottom > containerBottom) {
-                    container.scrollTop += selectBottom - containerBottom;
-                }
-            }
-        }
-    }
+  function addEventListeners() {
+    const document = getDocument()
 
-    /**
-     * Select the previous item in suggestions
-     */
+    input.addEventListener('keydown', keydownEventHandler)
+    input.addEventListener(KEYUP_EVENT_NAME, keyupEventHandler as EventListenerOrEventListenerObject)
+    input.addEventListener('focusout', focusOutEventHandler)
+    input.addEventListener('focus', focusEventHandler)
+    document.addEventListener('resize', resizeEventHandler)
+    document.addEventListener('scroll', scrollEventHandler, true)
+  }
 
-    function selectPrev(): void {
-        if (items.length < 1) {
-            selected = undefined;
-        } else {
-            if (selected === items[0] || selected === undefined) {
-                selected = items[items.length - 1];
-            } else {
-                for (let i = items.length - 1; i > 0; i--) {
-                    if (selected === items[i] || i === 1) {
-                        selected = items[i - 1];
-                        break;
-                    }
-                }
-            }
-        }
-    }
+  /**
+   * This function will remove DOM elements and clear event handlers
+   */
+  function destroy() {
+    removeEventListeners()
+    clearDebounceTimer()
+    clear()
 
-    /**
-     * Select the next item in suggestions
-     */
+    // prevent the update call if there are pending AJAX requests
+    incrementKeypressCounter()
+  }
 
-    function selectNext(): void {
-        if (items.length < 1) {
-            selected = undefined;
-        }
-        if (!selected || selected === items[items.length - 1]) {
-            selected = items[0];
-            return;
-        }
-        for (let i = 0; i < (items.length - 1); i++) {
-            if (selected === items[i]) {
-                selected = items[i + 1];
-                break;
-            }
-        }
-    }
-
-    function keydownEventHandler(ev: KeyboardEvent): void {
-        const keyCode = ev.which || ev.keyCode || 0;
-
-        if (keyCode === Keys.Up || keyCode === Keys.Down || keyCode === Keys.Esc) {
-            const containerIsDisplayed = containerDisplayed();
-
-            if (keyCode === Keys.Esc) {
-                settings.onSelect(undefined, input, ev);
-                clear();
-            } else {
-                if (!containerDisplayed || items.length < 1) {
-                    return;
-                }
-                keyCode === Keys.Up
-                    ? selectPrev()
-                    : selectNext();
-                update();
-            }
-
-            ev.preventDefault();
-            if (containerIsDisplayed) {
-                ev.stopPropagation();
-            }
-
-            return;
-        }
-
-        if (keyCode === Keys.Enter || keyCode === Keys.Tab) {
-            if (strict) {
-                settings.onSelect(selected, input, ev);
-                clear();
-            }
-            if (!strict) {
-                const freeTextSelect = {label: input.value} as T;
-                if (!selected) {
-                    if (onFreeTextSelect) {
-                        onFreeTextSelect(freeTextSelect, input);
-                    }
-                    settings.onSelect(freeTextSelect, input, ev);
-                } else {
-                    settings.onSelect(selected, input, ev);
-                }
-                clear();
-            }
-        }
-    }
-
-    function focusEventHandler(): void {
-        if (showOnFocus) {
-            startFetch(EventTrigger.Focus);
-        }
-    }
-
-    function startFetch(trigger: EventTrigger) {
-        // if multiple keys were pressed, before we get update from server,
-        // this may cause redrawing our autocomplete multiple times after the last key press.
-        // to avoid this, the number of times keyboard was pressed will be
-        // saved and checked before redraw our autocomplete box.
-        const savedKeypressCounter = ++keypressCounter;
-
-        const val = input.value;
-        if (val.length >= minLen || trigger === EventTrigger.Focus) {
-            clearDebounceTimer();
-            debounceTimer = window.setTimeout(function (): void {
-                settings.fetch(val, function (elements: T[] | false): void {
-                    if (keypressCounter === savedKeypressCounter && elements) {
-                        items = elements;
-                        inputValue = val;
-                        selected = items.length > 0 && autoselectfirst ? items[0] : undefined;
-                        update();
-                    }
-                }, EventTrigger.Keyboard);
-            }, trigger === EventTrigger.Keyboard ? debounceWaitMs : 0);
-        } else {
-            clear();
-        }
-    }
-
-    function blurEventHandler(): void {
-        // we need to delay clear, because when we click on an item, blur will be called before click and remove items from DOM
-        setTimeout(() => {
-            if (doc.activeElement !== input) {
-                clear();
-            }
-        }, 200);
-    }
-
-    /**
-     * This function will remove DOM elements and clear event handlers
-     */
-
-    function destroy(): void {
-        input.removeEventListener("focus", focusEventHandler);
-        input.removeEventListener("keydown", keydownEventHandler);
-        input.removeEventListener(keyUpEventName, keyupEventHandler as EventListenerOrEventListenerObject);
-        input.removeEventListener("blur", blurEventHandler);
-        doc.removeEventListener("resize", resizeEventHandler);
-        doc.removeEventListener("scroll", scrollEventHandler, true);
-        clearDebounceTimer();
-        clear();
-
-        // prevent the update call if there are pending AJAX requests
-        keypressCounter++;
-    }
-
-    // setup event handlers
-    input.addEventListener("keydown", keydownEventHandler);
-    input.addEventListener(keyUpEventName, keyupEventHandler as EventListenerOrEventListenerObject);
-    input.addEventListener("blur", blurEventHandler);
-    input.addEventListener("focus", focusEventHandler);
-    doc.addEventListener("resize", resizeEventHandler);
-    doc.addEventListener("scroll", scrollEventHandler, true);
-
-    return {
-        destroy
-    };
+  addEventListeners()
+  return {
+    destroy,
+  }
 }

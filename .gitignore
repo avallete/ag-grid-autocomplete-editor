@@ -115,3 +115,12 @@ typings/
 # next.js build output
 .next
 .idea/
+
+.vscode/
+.dccache
+cypress/videos/
+dist/
+*.d.ts
+*.js
+*.map.js
+*.css

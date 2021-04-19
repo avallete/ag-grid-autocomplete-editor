@@ -1,0 +1,10 @@
+# test results
+tests/cypress/videos
+tests/cypress/screenshots
+
+# node
+node_modules
+tests/node_modules
+
+*.d.ts
+*.js

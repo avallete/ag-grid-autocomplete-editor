@@ -17,7 +17,7 @@ $groupColor: #7f8fa6;
 }
 
 .ag-cell-editor-autocomplete * {
-    font: inherit;
+  font: inherit;
 }
 
 .ag-cell-editor-autocomplete > div {
@@ -31,8 +31,8 @@ $groupColor: #7f8fa6;
 
 .ag-cell-editor-autocomplete > div:hover:not(.group),
 .ag-cell-editor-autocomplete > div.selected {
-    background: $selectedColor;
-    cursor: pointer;
+  background: $selectedColor;
+  cursor: pointer;
 }
 
 .ag-cell-editor-autocomplete > div > * > strong {

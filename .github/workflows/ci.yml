@@ -18,20 +18,11 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-      - name: Build package
+      - name: Lint
         run: |
-          npm run build
-      # Manually install e2e dependencies since we don't want a package-lock
-      # to mess with the our new builded package
-      - name: Setup Cypress Dependencies
+          npm run lint
+      - name: Test
         run: |
-          npm install -D
-        working-directory: ./tests/
-      - name: E2E-tests
-        uses: cypress-io/github-action@v2
-        with:
-          # Dependencies already installed above
-          install: false
-          working-directory: ./tests/
+          npm run test
         env:
           NODE_ENV: test

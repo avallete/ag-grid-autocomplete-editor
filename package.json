@@ -3,22 +3,29 @@
   "version": "0.0.0-development",
   "description": "Quick implementation of autocompletion into ag-Grid cell using autocompleter package.",
   "deprecated": false,
-  "main": "ag-grid-autocomplete-editor.js",
+  "main": "dist/index.js",
   "files": [
-    "/autocompleter/autocomplete.d.ts",
-    "/ag-grid-autocomplete-editor.d.ts",
-    "/ag-grid-autocomplete-editor.js",
-    "/ag-grid-autocomplete-editor.js.map",
-    "/main.css",
-    "/main.css.map"
+    "types/ag-grid-autocomplete-editor.d.ts",
+    "types/types.d.ts",
+    "types/index.d.ts",
+    "types/autocompleter/types.d.ts",
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/main.css",
+    "dist/main.css.map"
   ],
   "repository": {
     "type": "git",
     "url": "https://github.com/avallete/ag-grid-autocomplete-editor.git"
   },
   "scripts": {
-    "start": "webpack serve --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail",
+    "build:watch": "webpack --config config/webpack.prod.js --progress --profile --watch",
+    "clean": "rm -rf **/*.map **/*.d.ts *.d.ts *.map ag-grid-autocomplete-editor.js dist/",
+    "test": "npm run clean && npm run build && npx cypress run",
+    "test:watch": "npm run clean && npm run build:watch & npx cypress open",
+    "lint": "prettier --write . && eslint .",
+    "lint:fix": "prettier --write . && eslint --fix .",
     "semantic-release": "semantic-release"
   },
   "author": "Andrew Valleteau",
@@ -56,24 +63,81 @@
     "select"
   ],
   "peerDependencies": {
-    "ag-grid-community": "^25.0.1"
+    "@ag-grid-community/core": "^25.x"
   },
   "devDependencies": {
-    "@types/node": "^14.14.22",
-    "autoprefixer": "10.2.4",
-    "css-loader": "^5.0.1",
-    "mini-css-extract-plugin": "^1.3.5",
-    "node-sass": "^5.0.0",
-    "postcss-loader": "^4.2.0",
-    "postcss-scss": "^3.0.4",
-    "sass-loader": "^10.1.1",
-    "semantic-release": "^17.3.7",
-    "style-loader": "^2.0.0",
-    "ts-loader": "8.0.14",
-    "typescript": "4.1.3",
-    "webpack": "5.19.0",
-    "webpack-cli": "4.4.0",
-    "webpack-dev-server": "^3.11.2"
+    "@commitlint/cli": "12.1.1",
+    "@commitlint/config-conventional": "12.1.1",
+    "@semantic-release/changelog": "5.0.1",
+    "@semantic-release/commit-analyzer": "github:semantic-release/commit-analyzer",
+    "@semantic-release/git": "github:semantic-release/git",
+    "@semantic-release/github": "github:semantic-release/github",
+    "@semantic-release/release-notes-generator": "github:semantic-release/release-notes-generator",
+    "@types/chai": "^4.2.16",
+    "@types/node": "14.14.41",
+    "@typescript-eslint/eslint-plugin": "4.22.0",
+    "@typescript-eslint/parser": "4.22.0",
+    "ag-grid-autocomplete-editor": "file:./",
+    "ag-grid-community": "^25.1.0",
+    "autoprefixer": "10.2.5",
+    "css-loader": "5.2.2",
+    "cypress": "^7.1.0",
+    "cypress-real-events": "^1.3.0",
+    "eslint": "7.24.0",
+    "eslint-config-airbnb-typescript": "12.3.1",
+    "eslint-config-prettier": "8.2.0",
+    "eslint-plugin-chai-friendly": "^0.6.0",
+    "eslint-plugin-cypress": "2.11.2",
+    "eslint-plugin-prettier": "3.4.0",
+    "eslint-plugin-radar": "0.2.1",
+    "eslint-plugin-unicorn": "29.0.0",
+    "husky": "4.3.8",
+    "lint-staged": "10.5.4",
+    "mini-css-extract-plugin": "1.5.0",
+    "postcss-loader": "5.2.0",
+    "postcss-scss": "3.0.5",
+    "prettier": "2.2.1",
+    "sass": "1.32.10",
+    "sass-loader": "11.0.1",
+    "semantic-release": "17.4.2",
+    "style-loader": "2.0.0",
+    "ts-loader": "9.0.0",
+    "typescript": "4.2.4",
+    "webpack": "5.33.2",
+    "webpack-cli": "4.6.0",
+    "webpack-dev-server": "3.11.2"
   },
-  "types": "./ag-grid-autocomplete-editor.d.ts"
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run test"
+    }
+  },
+  "lint-staged": {
+    "*": [
+      "prettier --write --ignore-unknown"
+    ],
+    "*.{js,jsx,ts,tsx,css}": [
+      "eslint --cache --fix"
+    ]
+  },
+  "release": {
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github"
+    ]
+  },
+  "types": "types/index.d.ts"
 }
