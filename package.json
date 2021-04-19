@@ -7,6 +7,7 @@
   "files": [
     "types/ag-grid-autocomplete-editor.d.ts",
     "types/types.d.ts",
+    "types/index.d.ts",
     "types/autocompleter/types.d.ts",
     "dist/index.js",
     "dist/index.js.map",
@@ -138,5 +139,5 @@
       "@semantic-release/github"
     ]
   },
-  "types": "types/ag-grid-autocomplete-editor.d.ts"
+  "types": "types/index.d.ts"
 }
