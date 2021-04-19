@@ -7,7 +7,7 @@ module.exports = {
   mode: 'production',
   devtool: 'source-map',
 
-  entry: './ag-grid-autocomplete-editor.ts',
+  entry: './index.ts',
 
   externals: {
     '@ag-grid-community/core': '@ag-grid-community/core',
@@ -16,7 +16,7 @@ module.exports = {
   output: {
     path: path.resolve('./dist/'),
     publicPath: 'http://localhost:8080/',
-    filename: 'ag-grid-autocomplete-editor.js',
+    filename: 'index.js',
     libraryTarget: 'umd',
   },
   optimization: {

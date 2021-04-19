@@ -4,7 +4,8 @@ import { IAutocompleteSelectCellEditorParameters, DataFormat, IAutocompleterSett
 
 import autocomplete from './autocompleter/autocomplete'
 
-import './ag-grid-autocomplete-editor.scss'
+// use require instead of import to generate the .css file with webpack but avoid import into the .d.ts file
+require('./ag-grid-autocomplete-editor.scss')
 
 const KEY_BACKSPACE = 8
 const KEY_DELETE = 46
@@ -254,5 +255,3 @@ export default class AutocompleteSelectCellEditor extends PopupComponent impleme
     return false
   }
 }
-
-export { AutocompleteSelectCellEditor, DataFormat, IAutocompleterSettings }
