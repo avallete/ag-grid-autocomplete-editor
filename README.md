@@ -1,7 +1,7 @@
 # ag-grid-autocomplete-editor
 
 [![npm version](https://badge.fury.io/js/ag-grid-autocomplete-editor.svg)](https://badge.fury.io/js/ag-grid-autocomplete-editor)
-[![Build Status](https://travis-ci.org/avallete/ag-grid-autocomplete-editor.svg?branch=master)](https://travis-ci.org/avallete/ag-grid-autocomplete-editor)
+[![CD](https://github.com/avallete/ag-grid-autocomplete-editor/actions/workflows/cd.yml/badge.svg)](https://github.com/avallete/ag-grid-autocomplete-editor/actions/workflows/cd.yml)
 [![codecov](https://codecov.io/gh/avallete/ag-grid-autocomplete-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/avallete/ag-grid-autocomplete-editor)
 
 Quick implementation of autocompletion into [ag-Grid](https://github.com/ag-grid/ag-grid) cell using [autocompleter](https://github.com/kraaden/autocomplete) package.
