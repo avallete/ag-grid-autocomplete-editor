@@ -32,7 +32,7 @@ const KEYS_TO_IGNORE = new Set([
   Keys.WindowsKey,
   Keys.Tab,
 ])
-
+const DEFAULT_MIN_LENGTH = 2
 export { AutocompleteItem, EventTrigger, AutocompleteSettings }
 
 export default function autocomplete<T extends AutocompleteItem>(
@@ -51,7 +51,7 @@ export default function autocomplete<T extends AutocompleteItem>(
     strict,
     autoselectfirst,
     onFreeTextSelect,
-    minLength,
+    minLength = DEFAULT_MIN_LENGTH,
     showOnFocus,
     input,
     className,
@@ -61,7 +61,7 @@ export default function autocomplete<T extends AutocompleteItem>(
     renderGroup,
   } = settings
   const debounceWaitMs = settings.debounceWaitMs || 0
-  const minimumInputLength = minLength || 2
+  const minimumInputLength = minLength
   const container: HTMLDivElement = document.createElement('div')
   const containerStyle = container.style
 
