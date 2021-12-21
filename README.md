@@ -33,7 +33,7 @@ You can configure and customize the cell and behavior with the following `cellEd
   - `render`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
   - `renderGroup`: (`same as classical autocompleter`) function, except that it take the current cellEditor as first parameter.
   - `className`: (`same as classical autocompleter`) default 'ag-cell-editor-autocomplete'
-  - `minLength`: (`same as classical autocompleter`) default 1
+  - `minLength`: (`same as classical autocompleter`) default 1. User has to edit the input to trigger data fetch. Which means if `minLength = 0` and used with fetch, user has to delete input value to be able to show the list. If you just want to show list on focus without any editing action, use `showOnFocus` instead.
   - `showOnFocus`: (`same as classical autocompleter`) default false trigger first fetch call when input is focused
   - `emptyMsg`: (`same as classical autocompleter`) default 'None'
   - `strict`: (` decide if the user can put free text or not`) default true.
